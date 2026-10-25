@@ -1,0 +1,19 @@
+{
+  "name": "Quy Vân Quán — Học Tiếng Trung",
+  "short_name": "Quy Vân Quán",
+  "description": "Game học chữ Hán qua Pinyin và Nghĩa tiếng Việt. Hỗ trợ học theo văn bản .txt tải lên và Spaced Repetition (SRS).",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "lang": "vi",
+  "background_color": "#faf8f5",
+  "theme_color": "#80b4dc",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

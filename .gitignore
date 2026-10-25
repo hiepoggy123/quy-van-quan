@@ -1,0 +1,5 @@
+# Ignore research/crawl directory
+rea_vietphrase/
+.system_generated/
+scratch/
+*.log
