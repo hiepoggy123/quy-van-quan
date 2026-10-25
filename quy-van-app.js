@@ -634,8 +634,42 @@
     // fetch. Nên câu chưa tải thì thẻ dùng chung phát một mẫu im lặng ngay trong cú chạm (cũng dừng giọng đang đọc),
     // bản đọc về thì phát trên đúng thẻ đó. Một lần tải hỏng không tắt giọng đọc: lần Nghe sau tải lại.
     function speak(text, opts) {
-        // TTS disabled as requested
-        return;
+        if (!text || typeof window === 'undefined') return;
+        if (!window.speechSynthesis) {
+            toast('Trình duyệt không hỗ trợ Web Speech API.');
+            return;
+        }
+        try {
+            window.speechSynthesis.cancel();
+            var clean = (typeof Core !== 'undefined' && Core.plainZh) ? Core.plainZh(text) : String(text);
+            var u = new SpeechSynthesisUtterance(clean);
+            u.lang = 'zh-CN';
+            u.rate = 0.85;
+            if (opts && typeof opts.rate === 'number') {
+                u.rate = Math.max(0.5, Math.min(1.5, 0.85 + opts.rate / 100));
+            }
+            var voices = window.speechSynthesis.getVoices();
+            if (voices && voices.length) {
+                for (var i = 0; i < voices.length; i++) {
+                    var v = voices[i];
+                    if (v.lang === 'zh-CN' || v.lang === 'zh_CN' || (v.lang && v.lang.indexOf('zh') === 0)) {
+                        u.voice = v;
+                        break;
+                    }
+                }
+            }
+            window.speechSynthesis.speak(u);
+        } catch (e) {
+            console.warn('Speech error:', e);
+        }
+    }
+
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = function () {
+                window.speechSynthesis.getVoices();
+            };
+        }
     }
 
     // ---------- thế giới, thanh trên, lời nhắc ----------
@@ -1749,13 +1783,13 @@
         var b = state.book;
         var html = '<div class="card book-study" id="bookCard"><h2><span class="zh">书</span>Học theo văn bản (.txt)</h2>';
         if (!b) {
-            return html + '<p class="small muted">Tải lên tệp văn bản tiếng Trung (.txt): Quy Vân Quán sẽ tự động phân tích tần suất và gợi ý ưu tiên học các từ xuất hiện nhiều nhất trong văn bản đó.</p>' +
-                '<div class="row" style="margin-top:10px"><button class="btn btn-primary" data-act="uploadTxt">📂 Chọn tệp .txt từ máy</button></div></div>';
+            return html + '<p class="small muted">Tải lên tệp văn bản hoặc tiểu thuyết tiếng Trung (.txt): Quy Vân Quán sẽ tự động phân tích tần suất và gợi ý ưu tiên học các từ xuất hiện nhiều nhất trong văn bản đó.</p>' +
+                '<div class="row" style="margin-top:10px; gap:8px;"><button class="btn btn-primary" data-act="manageBook">📂 Quản lý & Tải file .txt</button></div></div>';
         }
         var cover = Core.bookCoverage(state) || 0;
         var order = Core.bookOrder(state, DECK);
         var noDeck = !Object.keys(b.counts || {}).length;
-        return html + '<p class="book-title"><b>' + esc(b.title) + '</b> <span class="small muted">(Tệp văn bản)</span></p>' +
+        return html + '<p class="book-title"><b>' + esc(b.title) + '</b> <span class="small muted">(Tệp văn bản đang chọn)</span></p>' +
             '<p class="small muted book-cover">Văn bản có <b>' + num(b.total) + '</b> chữ Hán. Bạn đã đọc được <b>' + pct(cover) + '</b> (còn ' + order.length + ' chữ chưa học trong bộ chữ).</p>' +
             (noDeck ? '<p class="small book-nodeck">Không chữ nào của sách này có trong bộ ' + num(DECK.list.length) +
                 ' chữ của Quy Vân Quán (sách chữ phồn thể chẳng hạn), nên cuộn kế vẫn theo bộ chữ.</p>' : '') +
@@ -1763,12 +1797,103 @@
             '<div class="setting"><span>Ưu tiên cuộn kế tiếp theo văn bản này</span><button class="switch" role="switch" data-act="bookOn" aria-checked="' +
             !!b.on + '" aria-label="Cuộn kế theo văn bản"></button></div>' +
             '<div class="row" style="flex-wrap:wrap;gap:8px;margin-top:10px">' +
-            '<button class="btn btn-primary" data-act="viewBookWords">📊 Xem danh sách từ cần học</button>' +
-            '<button class="btn" data-act="uploadTxt">Tải tệp .txt khác</button>' +
-            '<button class="btn-ghost" data-act="bookClear">Bỏ văn bản</button></div></div>';
+            '<button class="btn btn-primary" data-act="manageBook">📚 Quản lý thư viện</button>' +
+            '<button class="btn" data-act="viewBookWords">📊 Xem bảng từ</button>' +
+            '<button class="btn-ghost" data-act="bookClear" style="color:#d32f2f;">🗑️ Gỡ văn bản</button></div></div>';
     }
 
-    // ---------- Custom TXT File Upload & Word Analysis ----------
+    // ---------- Custom TXT Books Library & Management ----------
+    function getCustomBooks() {
+        try {
+            var raw = localStorage.getItem('quyvan.customBooks');
+            return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveCustomBooks(books) {
+        try {
+            localStorage.setItem('quyvan.customBooks', JSON.stringify(books));
+        } catch (e) {}
+    }
+
+    function addCustomBook(book) {
+        var books = getCustomBooks();
+        var idx = -1;
+        for (var i = 0; i < books.length; i++) {
+            if (books[i].title === book.title) { idx = i; break; }
+        }
+        if (idx >= 0) books[idx] = book;
+        else books.unshift(book);
+        saveCustomBooks(books);
+    }
+
+    function openBookManagerModal() {
+        var b = state.book;
+        var customBooks = getCustomBooks();
+        var html = '<div class="lesson-top"><b>Quản lý văn bản học (.txt)</b>' +
+            '<button class="btn-ghost" data-act="closeSheet" style="margin-left:auto">Đóng</button></div>';
+
+        // 1. Current Active Book Section
+        if (b) {
+            var cover = Core.bookCoverage(state) || 0;
+            var order = Core.bookOrder(state, DECK);
+            html += '<div class="card" style="border: 2px solid var(--accent, #b8402c); border-radius: 10px; padding: 14px; margin: 12px 0; background: rgba(184, 64, 44, 0.04);">' +
+                '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+                '<h3 style="margin:0; font-size:1.15em;">📖 <b>' + esc(b.title) + '</b></h3>' +
+                '<span style="background:#2e7d32; color:#fff; padding:2px 8px; border-radius:10px; font-size:0.75em; font-weight:700;">ĐANG HỌC</span>' +
+                '</div>' +
+                '<p style="margin:8px 0 4px 0;">Tổng số chữ Hán: <b>' + num(b.total) + '</b> · Độ đọc hiểu: <b>' + pct(cover) + '</b></p>' +
+                '<div class="meter book-meter"><i style="width:' + Math.min(100, cover * 100).toFixed(2) + '%"></i></div>' +
+                '<p class="small muted" style="margin:4px 0 12px 0;">Còn <b>' + order.length + '</b> chữ chưa học trong bài học này.</p>' +
+                '<div class="row" style="flex-wrap:wrap; gap:8px;">' +
+                '<button class="btn btn-primary" data-act="startNextScroll">🚀 Học ngay 5 chữ tiếp theo</button>' +
+                '<button class="btn" data-act="viewBookWords">📊 Xem bảng từ</button>' +
+                '<button class="btn-ghost" data-act="bookClear" style="color:#d32f2f; margin-left:auto;">🗑️ Gỡ văn bản này</button>' +
+                '</div>' +
+                '</div>';
+        } else {
+            html += '<div class="card" style="margin: 12px 0; padding: 14px; border-radius: 10px; text-align: center;">' +
+                '<p class="muted" style="margin-bottom: 6px;"><b>Chưa có văn bản nào được chọn</b></p>' +
+                '<p class="small muted">Các bài học đang diễn ra theo thứ tự 1.546 chữ Hán thông dụng chuẩn của Quy Vân Quán.</p>' +
+                '</div>';
+        }
+
+        // 2. Saved Books Library
+        if (customBooks.length > 0) {
+            html += '<h3 style="margin-top:16px; margin-bottom:8px;">📚 Thư viện văn bản đã lưu (' + customBooks.length + ')</h3>' +
+                '<div style="max-height: 220px; overflow-y: auto; border: 1px solid var(--border, #ddd); border-radius: 8px; margin-bottom: 14px;">' +
+                customBooks.map(function (bk) {
+                    var isCurrent = b && b.title === bk.title;
+                    var cover = Core.bookCoverage({ book: bk, items: state.items }) || 0;
+                    return '<div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid var(--border, #eee);' + (isCurrent ? ' background:rgba(0,0,0,0.04);' : '') + '">' +
+                        '<div style="flex:1; margin-right:10px;">' +
+                        '<b>' + esc(bk.title) + '</b> <span class="small muted">(' + num(bk.total) + ' chữ)</span>' +
+                        '<div class="small muted">Đã thuộc: <b>' + pct(cover) + '</b></div>' +
+                        '</div>' +
+                        '<div class="row" style="gap:6px;">' +
+                        (isCurrent ? '<span style="color:#2e7d32; font-weight:700; font-size:0.85em; margin-right:6px;">Đang chọn</span>'
+                                   : '<button class="btn" style="padding:4px 10px; font-size:0.85em;" data-act="selectSavedBook" data-title="' + esc(bk.title) + '">Chọn học</button>') +
+                        '<button class="btn-ghost" style="padding:4px 8px; font-size:0.85em; color:#d32f2f;" data-act="deleteSavedBook" data-title="' + esc(bk.title) + '">Xóa</button>' +
+                        '</div>' +
+                        '</div>';
+                }).join('') +
+                '</div>';
+        }
+
+        // 3. Upload New File Section
+        html += '<div class="card" style="padding: 14px; border-radius: 10px; margin-top: 10px;">' +
+            '<h3 style="margin:0 0 6px 0;">➕ Tải lên văn bản mới</h3>' +
+            '<p class="small muted" style="margin-bottom:12px;">Hỗ trợ tệp văn bản .txt tiếng Trung (tiểu thuyết, truyện ngắn, tài liệu HSK...). Hệ thống sẽ tự động quét và phân tích tần suất chữ Hán.</p>' +
+            '<button class="btn btn-primary" data-act="uploadTxt">📂 Chọn tệp .txt từ máy tính/điện thoại</button>' +
+            '</div>' +
+            '<div class="row end" style="margin-top:14px;"><button class="btn-ghost" data-act="closeSheet">Đóng</button></div>';
+
+        ui.sheet.innerHTML = html;
+        openSheet('tall');
+    }
+
     function openTxtFilePicker() {
         var inp = $('txtFileInput');
         if (!inp) {
@@ -1808,10 +1933,11 @@
             counts: c.counts,
             on: true
         };
+        addCustomBook(book);
         Core.setBook(state, DECK, book);
         saveSoon();
         toast('Đã nạp văn bản: ' + title + ' (' + num(c.total) + ' chữ Hán)');
-        showBookModal(book);
+        openBookManagerModal();
         if (place === 'study') renderBookCard();
     }
 
@@ -1825,7 +1951,8 @@
             var e = DECK.byChar[ch];
             var count = b.counts[ch] || 0;
             return '<tr style="border-bottom:1px solid rgba(0,0,0,0.06)">' +
-                '<td style="font-size:1.4em;font-weight:bold;padding:6px" class="zh">' + esc(ch) + '</td>' +
+                '<td style="font-size:1.4em;font-weight:bold;padding:6px" class="zh">' + esc(ch) + 
+                '<button class="chip" data-act="speak" data-text="' + esc(ch) + '" style="padding:1px 6px;font-size:0.7em;margin-left:6px;vertical-align:middle">🔈</button></td>' +
                 '<td style="color:var(--accent,#b8402c);font-weight:600;padding:6px">' + esc(e.py) + '</td>' +
                 '<td style="padding:6px">' + esc(e.m) + '</td>' +
                 '<td style="text-align:right;padding:6px"><b>' + num(count) + '</b></td>' +
@@ -1847,6 +1974,7 @@
             '<tbody>' + (rows || '<tr><td colspan="4" style="text-align:center;padding:12px" class="small muted">Đã học hết các chữ trong văn bản này!</td></tr>') + '</tbody></table></div>' +
             '<div class="row" style="margin-top:14px;justify-content:space-between">' +
             '<button class="btn-primary" data-act="startNextScroll">🚀 Học ngay cuộn này</button>' +
+            '<button class="btn" data-act="manageBook">Quản lý văn bản</button>' +
             '<button class="btn-ghost" data-act="closeSheet">Đóng</button></div>';
 
         ui.sheet.innerHTML = modalHtml;
@@ -1937,6 +2065,7 @@
             '<div class="stroke-box"></div>' +
             '<div class="py" style="font-size:1.8em;font-weight:700;color:var(--accent,#b8402c);margin:4px 0">' + esc(e.py) + '</div>' +
             '<div class="mean" style="font-size:1.25em;font-weight:600;margin:6px 0">' + esc(e.m) + '</div>' +
+        '<div class="row" style="margin:4px 0"><button class="chip" data-act="speak" data-text="' + esc(ch) + '">🔈 Nghe phát âm</button></div>' +
             '<div class="hv small muted">Âm Hán Việt: <b>' + esc(e.hv) + '</b>' + (e.alts.length ? ' (' + esc(e.alts.join(', ')) + ')' : '') + '</div>' +
             '<div class="glyph-tools"><button class="chip" type="button" data-act="strokeToggle" aria-expanded="' + open + '">✍️ Cách viết</button></div>' +
             '<div class="stroke-panel"' + (open ? '' : ' hidden') + '><p class="stroke-status" aria-live="polite"></p>' +
@@ -2097,13 +2226,13 @@
     function feedbackHtml(entry, res, noMeaning) {
         if (res.ok) {
             var extra = res.exact ? '' : (res.toneOff ? ' (chưa đúng số thanh)' : '');
-            return '✓ <span class="zh">' + esc(entry.ch) + '</span> <b class="py" style="color:var(--accent,#b8402c);font-size:1.15em">' + esc(res.matched || entry.py) + '</b>' +
+            return '✓ <span class="zh">' + esc(entry.ch) + '</span> <b class="py" style="color:var(--accent,#b8402c);font-size:1.15em">' + esc(res.matched || entry.py) + '</b>' + '<button class="chip" type="button" data-act="speak" data-text="' + esc(entry.ch) + '" style="margin-left:6px;padding:1px 6px;font-size:0.8em;vertical-align:middle">🔈</button>' +
                 esc(extra) + (noMeaning ? '' : ' · <span class="m">' + esc(entry.m) + '</span>');
         }
         var conf = Core.confuseOf(STORY, entry.ch);
         var tip = conf.length ? '<div class="small muted" style="margin-top:4px">' + esc(conf[0].note) + '</div>'
             : (entry.note ? '<div class="small muted" style="margin-top:4px">' + esc(entry.note) + '</div>' : '');
-        return '✗ <span class="zh">' + esc(entry.ch) + '</span> Pinyin là <b class="py" style="color:var(--accent,#b8402c);font-size:1.15em">' + esc(entry.py) + '</b> · ' +
+        return '✗ <span class="zh">' + esc(entry.ch) + '</span> Pinyin là <b class="py" style="color:var(--accent,#b8402c);font-size:1.15em">' + esc(entry.py) + '</b>' + '<button class="chip" type="button" data-act="speak" data-text="' + esc(entry.ch) + '" style="margin-left:6px;padding:1px 6px;font-size:0.8em;vertical-align:middle">🔈</button> · ' +
             esc(entry.m) + (res.near ? ' (cần đúng thanh điệu)' : '') + tip;
     }
 
@@ -2141,6 +2270,7 @@
             }
         }
         if (res.ok) {
+            speak(e.ch);
             sfx(res.exact ? 'perfect' : 'ok');
             ui.quizInput.classList.add('ok');
             fb.className = 'feedback ok';
@@ -4742,6 +4872,7 @@
         pop.innerHTML = '<div class="g">' + esc(ch) + '</div>' +
             '<div class="py" style="font-size:1.3em;font-weight:700;color:var(--accent,#b8402c)">' + esc(e.py) + '</div>' +
             '<div class="m" style="font-size:1.05em;font-weight:600;margin:2px 0">' + esc(e.m) + '</div>' +
+        '<div style="margin:4px 0"><button class="chip" data-act="speak" data-text="' + esc(ch) + '">🔈 Nghe phát âm</button></div>' +
             '<div class="hv small muted">Hán Việt: ' + esc(hvOverride || e.hv) + '</div>' +
             (e.note ? '<div class="small muted" style="margin-top:4px">Mẹo: ' + esc(e.note) + '</div>' : '') +
             (conf.length ? '<div class="small muted" style="margin-top:4px">Dễ nhầm: ' + esc(conf[0].note) + '</div>' : '') +
@@ -4805,11 +4936,52 @@
                 renderPlace();
             }
             break;
+        case 'manageBook': openBookManagerModal(); break;
         case 'uploadTxt': openTxtFilePicker(); break;
         case 'viewBookWords': showBookModal(state.book); break;
         case 'startNextScroll': closeSheet(); startLesson(); break;
+        case 'selectSavedBook': {
+            var title = el.getAttribute('data-title');
+            var books = getCustomBooks();
+            for (var i = 0; i < books.length; i++) {
+                if (books[i].title === title) {
+                    Core.setBook(state, DECK, books[i]);
+                    sfx('tap');
+                    saveSoon();
+                    toast('Đã chọn học theo: ' + title);
+                    openBookManagerModal();
+                    if (place === 'study') renderBookCard();
+                    break;
+                }
+            }
+            break;
+        }
+        case 'deleteSavedBook': {
+            var title = el.getAttribute('data-title');
+            var books = getCustomBooks().filter(function(x) { return x.title !== title; });
+            saveCustomBooks(books);
+            if (state.book && state.book.title === title) {
+                Core.clearBook(state);
+                saveSoon();
+                toast('Đã xóa và gỡ văn bản: ' + title);
+            } else {
+                toast('Đã xóa văn bản: ' + title);
+            }
+            openBookManagerModal();
+            if (place === 'study') renderBookCard();
+            break;
+        }
         case 'bookClear':
             Core.clearBook(state);
+            sfx('tap');
+            saveSoon();
+            toast('Đã gỡ văn bản. Cuộn học tiếp theo sẽ theo thứ tự bộ chữ thông dụng.');
+            openBookManagerModal();
+            if (place === 'study') renderBookCard();
+            break;
+        case 'speak': speak(el.getAttribute('data-text')); break;
+        case 'speakQuiz': speakQuiz(); break;
+        case 'speakFish': if (fishing && fishing.q) speak(fishing.q.ch); break;
             sfx('tap');
             save();
             renderPlace();

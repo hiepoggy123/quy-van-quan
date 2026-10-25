@@ -844,7 +844,7 @@ button:disabled { cursor: default; opacity: 0.5; }
         <span class="stat" id="statLk" title="Linh khí: có khi đọc đúng chữ, dùng để sửa quán"><span class="zh-ico">灵</span><b>0</b></span>
         <span class="stat" id="statCover" title="Phần chữ Hán trong truyện mà bạn đã học"><span class="zh-ico">读</span><b>0%</b></span>
         <span class="grow"></span>
-        <button class="chip" id="btnUploadTxt" type="button" data-act="uploadTxt" title="Học chữ từ tệp văn bản .txt" style="font-weight:600;margin-right:6px">📄 Học file .txt</button>
+        <button class="chip" id="btnUploadTxt" type="button" data-act="manageBook" title="Quản lý và học chữ từ tệp văn bản .txt" style="font-weight:600;margin-right:6px">📄 Quản lý file .txt</button>
         <button class="icon-btn" id="btnSound" type="button" aria-label="Tắt âm thanh">🔊</button>
         <button class="icon-btn zh" id="btnBook" type="button" aria-label="Sổ ghi chép" title="Sổ ghi chép">簿</button>
     </header>
@@ -871,7 +871,8 @@ button:disabled { cursor: default; opacity: 0.5; }
         </div>
         <div class="feedback" id="fishFeedback" aria-live="polite"></div>
         <div class="tool-row" id="fishTools">
-            <button class="btn-ghost" type="button" data-act="fishHint">Gợi ý</button>
+            <button class="btn-ghost" type="button" data-act="fishHint">💡 Gợi ý</button>
+            <button class="btn-ghost" type="button" data-act="speakFish">🔈 Nghe</button>
             <button class="btn-ghost" type="button" data-act="stopFish">Thu cần</button>
         </div>
         <div class="fish-result" id="fishResult" hidden></div>
