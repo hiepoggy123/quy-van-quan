@@ -1,5 +1,5 @@
 // Service Worker for Quy Van Quan PWA (Offline Support)
-const CACHE_NAME = 'quy-van-v1';
+const CACHE_NAME = 'quy-van-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -40,6 +40,9 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+  // Let cross-origin requests (e.g. Google TTS, Google Fonts) pass through directly
+  if (!event.request.url.startsWith(self.location.origin)) return;
+  
   event.respondWith(
     caches.match(event.request).then((cached) => {
       return cached || fetch(event.request).catch(() => cached);

@@ -633,35 +633,84 @@
     // iOS chỉ cho một thẻ <audio> phát tiếng sau khi thẻ đó được play() ngay trong một cú chạm, mà bản đọc chỉ về sau
     // fetch. Nên câu chưa tải thì thẻ dùng chung phát một mẫu im lặng ngay trong cú chạm (cũng dừng giọng đang đọc),
     // bản đọc về thì phát trên đúng thẻ đó. Một lần tải hỏng không tắt giọng đọc: lần Nghe sau tải lại.
-    function speak(text, opts) {
-        if (!text || typeof window === 'undefined') return;
-        if (!window.speechSynthesis) {
-            toast('Trình duyệt không hỗ trợ Web Speech API.');
-            return;
+    var ttsAudioEl = null;
+
+    function playOnlineTts(cleanText) {
+        if (!ttsAudioEl) {
+            ttsAudioEl = document.createElement('audio');
+            ttsAudioEl.referrerPolicy = 'no-referrer';
+            document.body.appendChild(ttsAudioEl);
         }
         try {
-            window.speechSynthesis.cancel();
-            var clean = (typeof Core !== 'undefined' && Core.plainZh) ? Core.plainZh(text) : String(text);
-            var u = new SpeechSynthesisUtterance(clean);
-            u.lang = 'zh-CN';
-            u.rate = 0.85;
-            if (opts && typeof opts.rate === 'number') {
-                u.rate = Math.max(0.5, Math.min(1.5, 0.85 + opts.rate / 100));
+            ttsAudioEl.pause();
+            ttsAudioEl.currentTime = 0;
+            // Split if longer than 150 chars to avoid URL length limit
+            var textToPlay = cleanText.length > 150 ? cleanText.slice(0, 150) : cleanText;
+            var encoded = encodeURIComponent(textToPlay);
+            ttsAudioEl.src = 'https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-CN&client=tw-ob&q=' + encoded;
+            var p = ttsAudioEl.play();
+            if (p && p.catch) {
+                p.catch(function (err) {
+                    console.warn('Audio play error:', err);
+                });
             }
-            var voices = window.speechSynthesis.getVoices();
-            if (voices && voices.length) {
-                for (var i = 0; i < voices.length; i++) {
-                    var v = voices[i];
-                    if (v.lang === 'zh-CN' || v.lang === 'zh_CN' || (v.lang && v.lang.indexOf('zh') === 0)) {
-                        u.voice = v;
-                        break;
+        } catch (e) {
+            console.warn('playOnlineTts error:', e);
+        }
+    }
+
+    function speak(text, opts) {
+        if (!text || typeof window === 'undefined') return;
+        var clean = (typeof Core !== 'undefined' && Core.plainZh) ? Core.plainZh(text) : String(text);
+        clean = clean.replace(/\{[^}]*\}/g, '').trim();
+        if (!clean) return;
+
+        // Check if browser has a real native Chinese voice installed
+        var hasChineseVoice = false;
+        var chosenVoice = null;
+        if (window.speechSynthesis) {
+            try {
+                window.speechSynthesis.resume();
+                var voices = window.speechSynthesis.getVoices();
+                if (voices && voices.length) {
+                    for (var i = 0; i < voices.length; i++) {
+                        var v = voices[i];
+                        if (v.lang === 'zh-CN' || v.lang === 'zh_CN' || (v.lang && v.lang.indexOf('zh') === 0)) {
+                            hasChineseVoice = true;
+                            chosenVoice = v;
+                            break;
+                        }
                     }
                 }
-            }
-            window.speechSynthesis.speak(u);
-        } catch (e) {
-            console.warn('Speech error:', e);
+            } catch (e) {}
         }
+
+        // If native Chinese voice is available (iOS, Android, Mac, or Windows with Chinese language pack):
+        if (hasChineseVoice && window.SpeechSynthesisUtterance) {
+            try {
+                window.speechSynthesis.cancel();
+                var u = new SpeechSynthesisUtterance(clean);
+                u.voice = chosenVoice;
+                u.lang = 'zh-CN';
+                u.rate = 0.85;
+                if (opts && typeof opts.rate === 'number') {
+                    u.rate = Math.max(0.5, Math.min(1.5, 0.85 + opts.rate / 100));
+                }
+                window._currentUtterance = u;
+                u.onend = function () { window._currentUtterance = null; };
+                u.onerror = function () {
+                    window._currentUtterance = null;
+                    playOnlineTts(clean);
+                };
+                window.speechSynthesis.speak(u);
+                return;
+            } catch (e) {
+                console.warn('SpeechSynthesis error, falling back:', e);
+            }
+        }
+
+        // Fallback: Online high quality Google Chinese TTS (plays on any device even without Chinese voice pack!)
+        playOnlineTts(clean);
     }
 
     if (typeof window !== 'undefined' && window.speechSynthesis) {
