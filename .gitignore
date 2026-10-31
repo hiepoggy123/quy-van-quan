@@ -3,3 +3,9 @@ rea_vietphrase/
 .system_generated/
 scratch/
 *.log
+.gradle/
+build/
+android/.gradle/
+android/app/build/
+*.apk
+

@@ -1254,7 +1254,7 @@
         var r = Core.riddleById(STORY, id);
         if (!r || state.ram.set.indexOf(id) < 0) return;
         place = null;
-        riddle = { id: id, tried: {}, miss: 0, vi: !!state.settings.vi, ruby: false, gain: '' };
+        riddle = { id: id, tried: {}, miss: 0, vi: true, ruby: true, gain: '' };
         openSheet('dlg');
         renderRiddle();
     }
@@ -1272,13 +1272,15 @@
             '<p class="small muted" style="margin:0">Câu đố nói về một chữ. Chọn chữ đó:</p>' +
             '<div class="riddle-opts">' + Core.riddleOptions(r, ram.key).map(function (ch) {
                 var cls = solved && ch === r.ans ? ' right' : (riddle.tried[ch] ? ' wrong' : '');
+                var optEntry = DECK.byChar[ch];
+                var optLabel = (riddle.ruby && optEntry && optEntry.py) ? '<ruby>' + esc(ch) + '<rt>' + esc(optEntry.py) + '</rt></ruby>' : esc(ch);
                 return '<button class="riddle-opt' + cls + '" data-act="riddlePick" data-ch="' + esc(ch) + '" lang="zh"' +
-                    (solved || riddle.tried[ch] ? ' disabled' : '') + '>' + esc(ch) + '</button>';
+                    (solved || riddle.tried[ch] ? ' disabled' : '') + '>' + optLabel + '</button>';
             }).join('') + '</div>';
         var foot = '';
         if (solved) {
             var e = DECK.byChar[r.ans];
-            body += '<div class="reply riddle-answer"><b><span class="zh" lang="zh">' + esc(r.ans) + '</span> ' + esc(e ? e.hv : '') +
+            body += '<div class="reply riddle-answer"><b><span class="zh" lang="zh">' + esc(r.ans) + '</span> ' + esc(e ? (e.py ? e.py + ' / ' + e.hv : e.hv) : '') +
                 '</b>' + (e ? ' · ' + esc(e.m) : '') + '<div class="small">Ghép: ' + esc(r.parts) + '</div>' +
                 (riddle.gain ? '<div class="small riddle-gain">' + esc(riddle.gain) + '</div>' : '') + '</div>';
             var next = nextLamp();
@@ -1289,7 +1291,7 @@
         } else if (riddle.miss === 1) {
             body += '<p class="small muted">Chưa đúng. Nhìn kỹ từng phần của câu đố.</p>';
         }
-        var tools = '<div class="dlg-tools"><button class="chip" data-act="riddleRuby" aria-pressed="' + riddle.ruby + '">Âm Hán Việt</button>' +
+        var tools = '<div class="dlg-tools"><button class="chip" data-act="riddleRuby" aria-pressed="' + riddle.ruby + '">Pinyin</button>' +
             '<button class="chip" data-act="riddleVi" aria-pressed="' + riddle.vi + '">Dịch</button>' +
             '<button class="chip" data-act="riddleSpeak">🔈 Nghe</button></div>';
         ui.sheet.innerHTML = head + body + tools + (foot ? '<div class="sheet-foot">' + foot + '</div>' : '');
@@ -1990,44 +1992,152 @@
         if (place === 'study') renderBookCard();
     }
 
+    var bookModalTab = 'unlearned';
+    var bookModalSearch = '';
+
     function showBookModal(b) {
-        if (!b) return;
+        if (!b) b = state.book;
+        if (!b || !b.counts) return;
         var cover = Core.bookCoverage(state) || 0;
-        var order = Core.bookOrder(state, DECK);
-        var topWords = order.slice(0, 30);
         
-        var rows = topWords.map(function (ch, idx) {
+        var allChars = Object.keys(b.counts).filter(function (ch) {
+            return DECK.byChar[ch];
+        }).sort(function (x, y) {
+            return b.counts[y] - b.counts[x] || DECK.byChar[x].idx - DECK.byChar[y].idx;
+        });
+
+        var unlearnedChars = allChars.filter(function (ch) { return !state.items[ch]; });
+        var learnedChars = allChars.filter(function (ch) { return !!state.items[ch]; });
+
+        var targetChars = allChars;
+        if (bookModalTab === 'unlearned') targetChars = unlearnedChars;
+        else if (bookModalTab === 'learned') targetChars = learnedChars;
+
+        var q = (bookModalSearch || '').trim().toLowerCase();
+        if (q) {
+            targetChars = targetChars.filter(function (ch) {
+                var e = DECK.byChar[ch];
+                return ch.indexOf(q) >= 0 || (e.py && e.py.toLowerCase().indexOf(q) >= 0) || (e.hv && e.hv.toLowerCase().indexOf(q) >= 0) || (e.m && e.m.toLowerCase().indexOf(q) >= 0);
+            });
+        }
+
+        var rows = targetChars.slice(0, 150).map(function (ch, idx) {
             var e = DECK.byChar[ch];
             var count = b.counts[ch] || 0;
+            var isLearned = !!state.items[ch];
+            var statusBadge = isLearned 
+                ? '<span style="background:#e8f5e9;color:#2e7d32;padding:2px 6px;border-radius:4px;font-size:0.8em;font-weight:600">Đã học</span>'
+                : '<span style="background:#fff3e0;color:#e65100;padding:2px 6px;border-radius:4px;font-size:0.8em;font-weight:600">Chưa học</span>';
             return '<tr style="border-bottom:1px solid rgba(0,0,0,0.06)">' +
-                '<td style="font-size:1.4em;font-weight:bold;padding:6px" class="zh">' + esc(ch) + 
-                '<button class="chip" data-act="speak" data-text="' + esc(ch) + '" style="padding:1px 6px;font-size:0.7em;margin-left:6px;vertical-align:middle">🔈</button></td>' +
+                '<td style="padding:6px;text-align:center;color:#888;font-size:0.85em">' + (idx + 1) + '</td>' +
+                '<td style="font-size:1.35em;font-weight:bold;padding:6px" class="zh">' + esc(ch) + 
+                '<button class="chip" data-act="speak" data-text="' + esc(ch) + '" style="padding:1px 6px;font-size:0.7em;margin-left:6px;vertical-align:middle" title="Nghe phát âm">🔈</button></td>' +
                 '<td style="color:var(--accent,#b8402c);font-weight:600;padding:6px">' + esc(e.py) + '</td>' +
+                '<td style="padding:6px;color:#555">' + esc(e.hv) + '</td>' +
                 '<td style="padding:6px">' + esc(e.m) + '</td>' +
                 '<td style="text-align:right;padding:6px"><b>' + num(count) + '</b></td>' +
+                '<td style="text-align:center;padding:6px">' + statusBadge + '</td>' +
                 '</tr>';
         }).join('');
 
-        var modalHtml = '<div class="lesson-top"><b>' + esc(b.title) + '</b>' +
+        var modalHtml = '<div class="lesson-top"><b>Bảng từ vựng: ' + esc(b.title) + '</b>' +
             '<button class="btn-ghost" data-act="closeSheet" style="margin-left:auto">Đóng</button></div>' +
-            '<div class="card" style="margin:12px 0">' +
-            '<p style="margin:4px 0">Tổng số chữ Hán: <b>' + num(b.total) + '</b></p>' +
-            '<p style="margin:4px 0">Độ đọc hiểu hiện tại: <b>' + pct(cover) + '</b> (còn ' + order.length + ' chữ chưa học)</p>' +
-            '<div class="meter book-meter"><i style="width:' + Math.min(100, cover * 100).toFixed(2) + '%"></i></div>' +
-            '<p class="small muted" style="margin-top:6px">Các cuộn học kế tiếp sẽ tự động lấy 5 chữ chưa học có tần suất cao nhất trong văn bản này.</p>' +
+            '<div class="card" style="margin:10px 0;padding:12px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">' +
+            '<div>Tổng số chữ Hán: <b>' + num(b.total) + '</b> · Độ đọc hiểu: <b>' + pct(cover) + '</b> (còn ' + unlearnedChars.length + ' chữ chưa học)</div>' +
+            '<div class="row" style="gap:6px">' +
+            '<button class="btn-ghost" data-act="copyBookVocab" style="font-size:0.85em;padding:4px 8px">📋 Sao chép từ</button>' +
+            '<button class="btn-ghost" data-act="exportBookVocab" style="font-size:0.85em;padding:4px 8px">💾 Tải file .txt</button>' +
+            '</div></div>' +
+            '<div class="meter book-meter" style="margin-top:8px"><i style="width:' + Math.min(100, cover * 100).toFixed(2) + '%"></i></div>' +
             '</div>' +
-            '<h3>Top chữ xuất hiện nhiều nhất cần học</h3>' +
-            '<div style="max-height:360px;overflow-y:auto;border:1px solid var(--border,#ddd);border-radius:8px;padding:4px">' +
-            '<table style="width:100%;border-collapse:collapse;font-size:0.95em">' +
-            '<thead><tr style="text-align:left;border-bottom:1px solid var(--border,#ddd)"><th style="padding:6px">Chữ</th><th style="padding:6px">Pinyin</th><th style="padding:6px">Nghĩa</th><th style="text-align:right;padding:6px">Tần suất</th></tr></thead>' +
-            '<tbody>' + (rows || '<tr><td colspan="4" style="text-align:center;padding:12px" class="small muted">Đã học hết các chữ trong văn bản này!</td></tr>') + '</tbody></table></div>' +
-            '<div class="row" style="margin-top:14px;justify-content:space-between">' +
-            '<button class="btn-primary" data-act="startNextScroll">🚀 Học ngay cuộn này</button>' +
-            '<button class="btn" data-act="manageBook">Quản lý văn bản</button>' +
+
+            '<div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;flex-wrap:wrap">' +
+            '<div class="tab-group" style="display:flex;gap:4px">' +
+            '<button class="chip' + (bookModalTab === 'unlearned' ? ' active' : '') + '" data-act="setBookTab" data-tab="unlearned">Chưa học (' + unlearnedChars.length + ')</button>' +
+            '<button class="chip' + (bookModalTab === 'learned' ? ' active' : '') + '" data-act="setBookTab" data-tab="learned">Đã học (' + learnedChars.length + ')</button>' +
+            '<button class="chip' + (bookModalTab === 'all' ? ' active' : '') + '" data-act="setBookTab" data-tab="all">Tất cả (' + allChars.length + ')</button>' +
+            '</div>' +
+            '<input type="text" id="bookSearchInput" placeholder="🔍 Tìm chữ, Pinyin, nghĩa..." value="' + esc(bookModalSearch) + '" style="margin-left:auto;padding:4px 10px;border:1px solid var(--border,#ccc);border-radius:6px;font-size:0.85em;width:180px">' +
+            '</div>' +
+
+            '<div style="max-height:360px;overflow-y:auto;border:1px solid var(--border,#ddd);border-radius:8px;padding:2px">' +
+            '<table style="width:100%;border-collapse:collapse;font-size:0.92em">' +
+            '<thead><tr style="text-align:left;background:rgba(0,0,0,0.03);border-bottom:1px solid var(--border,#ddd)">' +
+            '<th style="padding:6px;text-align:center;width:30px">#</th><th style="padding:6px">Chữ</th><th style="padding:6px">Pinyin</th><th style="padding:6px">Hán Việt</th><th style="padding:6px">Nghĩa tiếng Việt</th><th style="text-align:right;padding:6px">Số lần</th><th style="text-align:center;padding:6px">Trạng thái</th></tr></thead>' +
+            '<tbody>' + (rows || '<tr><td colspan="7" style="text-align:center;padding:16px" class="small muted">Không tìm thấy từ phù hợp bộ lọc.</td></tr>') + '</tbody></table></div>' +
+            (targetChars.length > 150 ? '<p class="small muted" style="margin:4px 0;text-align:center">Hiển thị top 150 / ' + targetChars.length + ' chữ theo tần suất xuất hiện.</p>' : '') +
+
+            '<div class="row" style="margin-top:12px;justify-content:space-between;flex-wrap:wrap;gap:8px">' +
+            '<button class="btn-primary" data-act="startNextScroll">🚀 Học ngay 5 chữ tiếp theo</button>' +
+            '<button class="btn" data-act="manageBook">📚 Quản lý văn bản</button>' +
             '<button class="btn-ghost" data-act="closeSheet">Đóng</button></div>';
 
         ui.sheet.innerHTML = modalHtml;
         openSheet('tall');
+
+        var searchInp = $('bookSearchInput');
+        if (searchInp) {
+            searchInp.addEventListener('input', function (ev) {
+                bookModalSearch = ev.target.value;
+                showBookModal(b);
+                var inp = $('bookSearchInput');
+                if (inp) {
+                    inp.focus();
+                    inp.selectionStart = inp.selectionEnd = inp.value.length;
+                }
+            });
+        }
+    }
+
+    function copyBookVocab() {
+        var b = state.book;
+        if (!b || !b.counts) return;
+        var allChars = Object.keys(b.counts).filter(function (ch) {
+            return DECK.byChar[ch];
+        }).sort(function (x, y) {
+            return b.counts[y] - b.counts[x] || DECK.byChar[x].idx - DECK.byChar[y].idx;
+        });
+        var lines = ['Chữ\tPinyin\tHán-Việt\tNghĩa\tSố lần\tTrạng thái'];
+        allChars.forEach(function (ch) {
+            var e = DECK.byChar[ch];
+            var count = b.counts[ch] || 0;
+            var st = state.items[ch] ? 'Đã học' : 'Chưa học';
+            lines.push(ch + '\t' + e.py + '\t' + e.hv + '\t' + e.m + '\t' + count + '\t' + st);
+        });
+        var text = lines.join('\n');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () {
+                toast('Đã sao chép ' + allChars.length + ' từ vào clipboard!');
+            });
+        } else {
+            toast('Đã chọn ' + allChars.length + ' từ.');
+        }
+    }
+
+    function exportBookVocab() {
+        var b = state.book;
+        if (!b || !b.counts) return;
+        var allChars = Object.keys(b.counts).filter(function (ch) {
+            return DECK.byChar[ch];
+        }).sort(function (x, y) {
+            return b.counts[y] - b.counts[x] || DECK.byChar[x].idx - DECK.byChar[y].idx;
+        });
+        var lines = ['# Danh sách từ vựng từ văn bản: ' + b.title, '# Tổng chữ: ' + b.total, 'Chữ\tPinyin\tHán-Việt\tNghĩa\tSố lần\tTrạng thái'];
+        allChars.forEach(function (ch) {
+            var e = DECK.byChar[ch];
+            var count = b.counts[ch] || 0;
+            var st = state.items[ch] ? 'Đã học' : 'Chưa học';
+            lines.push(ch + '\t' + e.py + '\t' + e.hv + '\t' + e.m + '\t' + count + '\t' + st);
+        });
+        var blob = new Blob([lines.join('\r\n')], { type: 'text/plain;charset=utf-8' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = (b.title || 'tu_vung') + '_tu_vung.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        toast('Đã xuất file từ vựng .txt thành công!');
     }
 
     // Vẽ lại riêng thẻ Học theo sách (danh sách đọc xong, đang đọc một sách); thẻ Cuộn chỉ đổi khi sách đổi (renderPlace).
@@ -2858,7 +2968,7 @@
     function openScene(scene) {
         place = null;
         dialog = {
-            scene: scene, step: Core.sceneStepIndex(state, scene), vi: !!state.settings.vi, ruby: false, tried: {}, reply: null, right: false,
+            scene: scene, step: Core.sceneStepIndex(state, scene), vi: true, ruby: true, tried: {}, reply: null, right: false,
             read: null, reveal: null, charm: null
         };
         openSheet('dlg');
@@ -2887,7 +2997,7 @@
               closeBtn + '</div>';
         var rubyOpt = dialog.ruby ? { ruby: 'always' } : null;
         var tools = '<div class="dlg-tools">' +
-            '<button class="chip" data-act="dlgRuby" aria-pressed="' + dialog.ruby + '">Âm Hán Việt</button>' +
+            '<button class="chip" data-act="dlgRuby" aria-pressed="' + dialog.ruby + '">Pinyin</button>' +
             '<button class="chip" data-act="dlgVi" aria-pressed="' + dialog.vi + '">Dịch</button>' +
             '<button class="chip" data-act="dlgSpeak">' + (step.song ? '♪ Nghe hát' : '🔈 Nghe') + '</button></div>';
         var body = '';
@@ -3034,11 +3144,11 @@
             var e = DECK.byChar[p.ch];
             if (!e && !p.hv) return;
             // "字{âm}" chọn âm riêng ở chỗ này: chỉ âm đó được tính.
-            var entry = p.hv ? { ch: p.ch, hv: p.hv, alts: [], m: e ? e.m : '' } : e;
+            var entry = p.hv ? { ch: p.ch, hv: p.hv, py: e ? e.py : '', alts: [], m: e ? e.m : '' } : e;
             at[i] = items.length;
             items.push({ ch: p.ch, entry: entry });
         });
-        return { parts: parts, items: items, at: at, pos: 0, hint: false, tries: 0, first: {}, msg: null, done: !items.length };
+        return { parts: parts, items: items, at: at, pos: 0, hint: false, tries: 0, first: {}, msg: null, done: !items.length, shown: true };
     }
 
     function readLineHtml(rd) {
@@ -3046,25 +3156,35 @@
             if (!p.cjk) return '<span class="rd-p">' + esc(p.ch) + '</span>';
             var k = rd.at[i];
             if (k === undefined) return '<span class="rd" lang="zh">' + esc(p.ch) + '</span>';
+            var rubyText = (rd.items[k].entry.py || rd.items[k].entry.hv || '');
             if (rd.done || k < rd.pos) {
-                return '<span class="rd rd-done" lang="zh"><ruby>' + esc(p.ch) + '<rt>' + esc(rd.items[k].entry.hv) + '</rt></ruby></span>';
+                return '<span class="rd rd-done" lang="zh"><ruby>' + esc(p.ch) + '<rt>' + esc(rubyText) + '</rt></ruby></span>';
             }
-            // Bước bùa (rd.shown): âm hiện sẵn trên mọi chữ, người chơi gõ nhanh cho kịp giờ.
-            var ch = rd.shown ? '<ruby>' + esc(p.ch) + '<rt>' + esc(rd.items[k].entry.hv) + '</rt></ruby>' : esc(p.ch);
+            // Hiện sẵn Pinyin trên mọi chữ để người học theo dõi và học phát âm
+            var ch = (rd.shown !== false) ? '<ruby>' + esc(p.ch) + '<rt>' + esc(rubyText) + '</rt></ruby>' : esc(p.ch);
             return '<span class="rd' + (k === rd.pos ? ' rd-cur' : '') + '" lang="zh">' + ch + '</span>';
         }).join('');
     }
 
     function readHtml(step) {
         var rd = dialog.read;
-        return '<p class="small muted" style="margin:0">' + esc(step.ask || 'Đọc từng chữ của câu.') + '</p>' +
+        var curIt = rd && !rd.done && rd.items[rd.pos];
+        var hintBar = curIt ? '<div class="read-cur-hint" style="margin:8px 0;padding:6px 12px;background:rgba(217,119,6,0.12);border-radius:6px;font-size:0.95em;text-align:center;">' +
+            'Chữ đang đọc: <b class="zh" style="font-size:1.25em;color:var(--color-primary,#b45309)">' + esc(curIt.ch) + '</b>' +
+            (curIt.entry.py ? ' · Pinyin: <b style="color:var(--color-accent,#16a34a)">' + esc(curIt.entry.py) + '</b>' : '') +
+            (curIt.entry.hv ? ' (' + esc(curIt.entry.hv) + ')' : '') +
+            (curIt.entry.m ? ' — <i>' + esc(curIt.entry.m) + '</i>' : '') +
+            '</div>' : '';
+        return '<p class="small muted" style="margin:0">' + esc(step.ask || 'Đọc từng chữ của câu (nhập Pinyin hoặc âm đọc).') + '</p>' +
             '<div class="read-line" id="readLine">' + readLineHtml(rd) + '</div>' +
+            hintBar +
             (step.read.vi ? '<div class="vi-line read-vi" id="readVi"' + (dialog.vi || rd.done ? '' : ' hidden') + '>' + esc(step.read.vi) + '</div>' : '') +
             '<div id="readAsk"' + (rd.done ? ' hidden' : '') + '>' + answerFormHtml('readInput', 'Đọc') + '</div>' +
             '<div class="feedback' + (rd.msg && rd.msg.kind ? ' ' + rd.msg.kind : '') + '" id="readFeedback" aria-live="polite">' +
             (rd.msg ? rd.msg.html : '') + '</div>' +
             '<div class="tool-row" id="readTools"' + (rd.done ? ' hidden' : '') + '>' +
             '<button class="btn-ghost" type="button" data-act="readHint">Gợi ý</button>' +
+            '<button class="btn-ghost" type="button" data-act="readSkip">Bỏ qua / Điền xong</button>' +
             '<button class="btn-ghost" type="button" data-act="dlgSpeak">🔈 Nghe</button></div>' +
             '<div class="sheet-foot" id="readFoot"' + (rd.done ? '' : ' hidden') + '>' +
             '<button class="btn-primary" data-act="dlgNext">Tiếp ›</button></div>';
@@ -3121,7 +3241,22 @@
     }
 
     function readHintHtml(it) {
-        return 'Âm: <span class="hv">' + esc(it.entry.hv) + '</span>' + (it.entry.m ? ' · nghĩa: ' + esc(it.entry.m) : '');
+        var py = it.entry.py ? 'Pinyin: <b>' + esc(it.entry.py) + '</b> · ' : '';
+        var hv = it.entry.hv ? 'Hán-Việt: <span class="hv">' + esc(it.entry.hv) + '</span>' : '';
+        var m = it.entry.m ? ' · nghĩa: ' + esc(it.entry.m) : '';
+        return py + hv + m;
+    }
+
+    function readSkip() {
+        var rd = dialog && dialog.read;
+        if (!rd || rd.done) return;
+        rd.pos = rd.items.length;
+        rd.done = true;
+        rd.msg = { kind: 'ok', html: '✓ Đã hoàn thành câu.' };
+        updateRead();
+        var st = stepOf();
+        var line = (st && st.read && st.read.line) || '';
+        if (line) speak(Core.plainZh(line));
     }
 
     function submitRead(text) {
@@ -5072,6 +5207,10 @@
             renderDialog();
             break;
         case 'dlgRuby': dialog.ruby = !dialog.ruby; renderDialog(); break;
+        case 'readSkip': readSkip(); break;
+        case 'setBookTab': bookModalTab = el.getAttribute('data-tab') || 'unlearned'; showBookModal(state.book); break;
+        case 'copyBookVocab': copyBookVocab(); break;
+        case 'exportBookVocab': exportBookVocab(); break;
         case 'dlgSpeak': {
             // Lời thoại, cả câu của bước đọc, cả tờ thư, hoặc câu đáp của bước chọn; lời hát đọc chậm.
             var st = stepOf();

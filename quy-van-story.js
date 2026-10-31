@@ -186,9 +186,10 @@
                 { say: 'lao-quy', zh: '妖说的话，你看得懂吗？', vi: 'Lời yêu quái nói, cháu có hiểu không?' },
                 {
                     choose: [
-                        { zh: '看不懂。', vi: 'Không hiểu ạ.', ok: true },
-                        { zh: '看得懂！', vi: 'Hiểu chứ!', ok: false,
-                            reply: { zh: '哈哈，那你说说，“龟”字怎么读？', vi: 'Ha ha, vậy cháu nói xem, chữ “龟” đọc thế nào?' } }
+                        { zh: '看不懂。', vi: 'Chưa hiểu ạ, cháu là người mới bắt đầu.', ok: true,
+                            reply: { zh: '哈哈，不急！我们从最简单的字慢慢学起。', vi: 'Ha ha, không vội! Chúng ta cứ học dần từ những chữ đơn giản nhất.' } },
+                        { zh: '看得懂一点。', vi: 'Cháu hiểu một chút ạ.', ok: true,
+                            reply: { zh: '很好！去书房看看吧，有很多字等你学呢。', vi: 'Rất tốt! Vào thư phòng xem đi, có nhiều chữ đang đợi cháu học đấy.' } }
                     ]
                 },
                 { say: 'lao-quy', zh: '不懂没关系。先去书房学字吧。', vi: 'Không hiểu cũng không sao. Trước hết vào thư phòng học chữ đi.' },
