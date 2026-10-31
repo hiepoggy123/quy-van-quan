@@ -1561,6 +1561,18 @@
 
     function studyHtml() {
         var html = '';
+        var todayCount = Core.learnedOn(state, now());
+        var dueList = Core.dueList(state, now());
+        html += '<div class="card" style="background:linear-gradient(135deg,rgba(128,180,220,0.12),rgba(184,64,44,0.06));border:1px dashed var(--color-primary,#80b4dc);border-radius:10px;padding:12px;margin-bottom:12px;">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+            '<b style="font-size:1.05em">🎯 Định mức phiên học (5–10 phút)</b>' +
+            '<span class="small muted">Chu kỳ 4 tiếng</span></div>' +
+            '<div style="margin-top:8px;font-size:0.9em;line-height:1.6">' +
+            '<div>📜 <b>1 Cuộn chữ mới:</b> Học 5 chữ Hán (hôm nay đã học: <b>' + num(todayCount) + '</b> chữ)</div>' +
+            '<div>🐟 <b>Ôn bài / Câu cá:</b> 5–10 chữ cũ (đang chờ ôn: <b>' + num(dueList.length) + '</b> chữ)</div>' +
+            '<div>🍵 <b>1 Lượt cốt truyện:</b> Tiếp khách hoặc nấu 1 món ăn</div>' +
+            '</div></div>';
+
         var next = Core.nextScroll(state, DECK);
         // Học theo sách đang bật: cuộn lấy chữ chưa học gặp nhiều nhất trong sách (next.src 'book', next.fromBook chữ).
         var book = state.book && state.book.on ? state.book : null;

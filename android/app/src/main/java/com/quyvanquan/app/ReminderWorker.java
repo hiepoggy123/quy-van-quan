@@ -17,10 +17,10 @@ public class ReminderWorker extends Worker {
 
     public static final String CHANNEL_ID = "quy_van_reminders";
     private static final String[] MESSAGES = new String[]{
-        "Đã 4 tiếng trôi qua, hãy dành 5 phút cùng Lão Quy ôn lại chữ Hán và Pinyin nhé! 🏮",
-        "Có khách lạ ghé thăm quán trà trên mây kìa! Vào tiếp khách và học chữ mới nào. 🍵",
-        "Mỗi ngày một chút chữ Hán, tích tiểu thành đại! Mở Quy Vân Quán lên ôn bài nhé. ✨",
-        "Đừng quên mục tiêu học tiếng Trung hôm nay! Hồ sen đang chờ bạn câu cá ôn từ đấy. 🐟"
+        "Đã 4 tiếng trôi qua! Mục tiêu phiên này: 1 cuộn mới (5 chữ) + câu 5 con cá ôn bài nhé! 🏮",
+        "Có khách ghé thăm quán trà trên mây kìa! Dành 5 phút vào tiếp khách và học 5 chữ mới nào. 🍵",
+        "Mỗi ngày 4 phiên, mỗi phiên 5 chữ! Sau 1 tháng bạn sẽ thuộc 600 chữ Hán đấy. ✨",
+        "Đã đến giờ ôn tập! Hồ sen đang chờ bạn câu cá ôn từ, đừng để chữ cũ rơi rụng nhé. 🐟"
     };
 
     public ReminderWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
