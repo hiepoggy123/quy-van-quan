@@ -2480,6 +2480,10 @@
         pairExplain: pairExplain,
         answerPair: answerPair,
         REALMS: REALMS,
-        getRealm: getRealm
+        getRealm: getRealm,
+        MOBS: MOBS,
+        BOSSES: BOSSES,
+        SECTS: SECTS,
+        calcCombatStats: calcCombatStats
     };
 }));

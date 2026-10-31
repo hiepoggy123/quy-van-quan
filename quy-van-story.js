@@ -34,10 +34,10 @@
     if (root) { root.QuyVanStory = data; }
 }(typeof globalThis !== 'undefined' ? globalThis : this, {
     guests: {
-        'lao-quy': { name: 'Lão Quy', zh: '老龟', title: 'Rùa già giữ hồ sen' },
-        'ho-nguyet': { name: 'Hồ Tiểu Nguyệt', zh: '胡小月', title: 'Hồ ly mê trà' },
-        'tieu-mac': { name: 'Tiểu Mặc', zh: '小墨', title: 'Mèo mực ham cá' },
-        'tieu-ly': { name: 'Tiểu Ly', zh: '小狸', title: 'Lửng con hay tráo chữ' },
+        'lao-quy': { name: 'Tư Đồ Nam', zh: '司徒南', title: 'Khí linh Thiên Nghịch Châu · Đệ Nhất Ma Đầu' },
+        'ho-nguyet': { name: 'Lý Mộ Uyển', zh: '李慕婉', title: 'Lạc Tinh Môn Đan Sư · Hồng nhan tri kỷ' },
+        'tieu-mac': { name: 'Tôn Đại Trụ', zh: '孙大柱', title: 'Hằng Nhạc Phái Sư phụ' },
+        'tieu-ly': { name: 'Đằng Lệ', zh: '藤厉', title: 'Đằng Gia Thiếu Chủ · Đối đầu tử thù' },
         // Khách đêm (Liêu Trai): chỉ đến khi trăng lên. sprite: tên sprite trong QuyVanWorld.SPRITES,
         // human là hình người, 'true' là hình thật sau bước reveal.
         'bach': { name: 'Bạch Thu Luyện', zh: '白秋练', title: 'Cô gái áo trắng bên hồ', night: true,

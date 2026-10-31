@@ -6868,22 +6868,22 @@
 
     // Nhãn nơi chốn (DOM) và chữ trên biển.
     var PLACES = [
-        { id: 'hall', zh: '三清殿', vi: 'Chính điện', at: [5.0, 3.2, 104] },
-        { id: 'study', zh: '书斋', vi: 'Thư trai', at: [5.7, 9.5, 66] },
-        { id: 'pond', zh: '莲池', vi: 'Hồ sen', at: [15.3, 10.6, 30] },
-        { id: 'tea', zh: '茶馆', vi: 'Quán trà', at: [14.4, 15.5, 52] },
-        { id: 'gate', zh: '山门', vi: 'Sơn môn', at: [20.6, 17.0, 62] },
+        { id: 'hall', zh: '恒岳殿', vi: 'Tông Môn Điện', at: [5.0, 3.2, 104] },
+        { id: 'study', zh: '天逆界', vi: 'Thiên Nghịch Động', at: [5.7, 9.5, 66] },
+        { id: 'pond', zh: '聚灵池', vi: 'Tụ Linh Hồ', at: [15.3, 10.6, 30] },
+        { id: 'tea', zh: '斩妖台', vi: 'Trảm Yêu Đài', at: [14.4, 15.5, 52] },
+        { id: 'gate', zh: '山门', vi: 'Hằng Nhạc Sơn Môn', at: [20.6, 17.0, 62] },
         { id: 'library', zh: '藏经阁', vi: 'Tàng Kinh Các', at: [13.15, 3.2, 110] },
-        { id: 'kitchen', zh: '厨房', vi: 'Nhà bếp', at: [3.5, 13.45, 62] },
-        { id: 'garden', zh: '菜园', vi: 'Vườn rau', at: [8.3, 17.3, 24] },
-        { id: 'pavilion', zh: '望云亭', vi: 'Vọng Vân Đình', at: [21.9, 3.9, 92] }
+        { id: 'kitchen', zh: '炼丹房', vi: 'Luyện Đan Lô', at: [3.5, 13.45, 62] },
+        { id: 'garden', zh: '灵药圃', vi: 'Linh Dược Phố', at: [8.3, 17.3, 24] },
+        { id: 'pavilion', zh: '望仙台', vi: 'Vọng Tiên Đài', at: [21.9, 3.9, 92] }
     ];
     var PLAQUES = [
-        { id: 'gate', text: '归云观', at: [20.6, 17.0, 31.5], face: 'x', len: 1.5, size: 6.2 },
-        { id: 'tea', text: '妖客来', at: [14.4, 16.68, 24.5], face: 'y', len: 1.7, size: 6.2, need: 'san' },
-        { id: 'flag', text: '茶', at: [11.75, 16.95, 30], face: 'flat', size: 5, need: 'san' },
+        { id: 'gate', text: '恒岳派', at: [20.6, 17.0, 31.5], face: 'x', len: 1.5, size: 6.2 },
+        { id: 'tea', text: '斩妖台', at: [14.4, 16.68, 24.5], face: 'y', len: 1.7, size: 6.2, need: 'san' },
+        { id: 'flag', text: '修', at: [11.75, 16.95, 30], face: 'flat', size: 5, need: 'san' },
         { id: 'library', text: '藏经阁', at: [13.15, 4.08, 68], face: 'y', len: 1.4, size: 5.2 },
-        { id: 'pavilion', text: '望云亭', at: [21.9, 4.7, 52.5], face: 'y', len: 1.0, size: 4 }
+        { id: 'pavilion', text: '望仙台', at: [21.9, 4.7, 52.5], face: 'y', len: 1.0, size: 4 }
     ];
 
     // Đèn lồng Sơn môn để thắp đêm: đèn đá đứng bên trái cổng trên màn hình (lamp-4 trong worldObjects). Đèn đá

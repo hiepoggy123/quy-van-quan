@@ -15,12 +15,12 @@ import java.util.Random;
 
 public class ReminderWorker extends Worker {
 
-    public static final String CHANNEL_ID = "quy_van_reminders";
+    public static final String CHANNEL_ID = "tu_tien_reminders";
     private static final String[] MESSAGES = new String[]{
-        "Đã 4 tiếng trôi qua! Mục tiêu phiên này: 1 cuộn mới (5 chữ) + câu 5 con cá ôn bài nhé! 🏮",
-        "Có khách ghé thăm quán trà trên mây kìa! Dành 5 phút vào tiếp khách và học 5 chữ mới nào. 🍵",
-        "Mỗi ngày 4 phiên, mỗi phiên 5 chữ! Sau 1 tháng bạn sẽ thuộc 600 chữ Hán đấy. ✨",
-        "Đã đến giờ ôn tập! Hồ sen đang chờ bạn câu cá ôn từ, đừng để chữ cũ rơi rụng nhé. 🐟"
+        "Đã 4 tiếng trôi qua! Tư Đồ Nam nhắc nhở: Vào Thiên Nghịch Không Gian luyện 5 chữ mới và trảm yêu nào! ⚡",
+        "Linh mạch tông môn đã ngưng tụ linh khí! Vào thu hoạch và học cuộn chữ mới đột phá cảnh giới. 💎",
+        "Vương Lâm xuất quan! Dành 5 phút trảm yêu quái và ôn tập thần thức củng cố đan điền! ⚔️",
+        "Đến giờ bồi dưỡng tu vi! Mau vào tu luyện đạo văn, vấn đỉnh Đạp Thiên Cảnh HSK 9! 🌟"
     };
 
     public ReminderWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
@@ -49,7 +49,7 @@ public class ReminderWorker extends Worker {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                 CHANNEL_ID,
-                "Nhắc nhở học tập Quy Vân Quán",
+                "Nhắc nhở tu luyện Tu Tiên Nghịch Thiên",
                 NotificationManager.IMPORTANCE_DEFAULT
             );
             channel.setDescription("Thông báo nhắc nhở ôn bài mỗi 4 giờ (7h-21h)");
@@ -69,7 +69,7 @@ public class ReminderWorker extends Worker {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("Quy Vân Quán — Đến giờ học tiếng Trung rồi! 🏮")
+            .setContentTitle("Tu Tiên Nghịch Thiên — Đến giờ tu luyện chữ Hán rồi! ⚡")
             .setContentText(msg)
             .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

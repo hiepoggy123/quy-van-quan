@@ -57,16 +57,16 @@
     var FORCE_NIGHT_KEY = 'quyvan.forceNight';
 
     var PLACES = {
-        hall: { zh: '三清殿', vi: 'Chính điện' },
-        study: { zh: '书斋', vi: 'Thư trai' },
-        pond: { zh: '莲池', vi: 'Hồ sen' },
-        tea: { zh: '茶馆', vi: 'Quán trà' },
-        gate: { zh: '山门', vi: 'Sơn môn' },
+        hall: { zh: '恒岳殿', vi: 'Tông Môn Điện' },
+        study: { zh: '天逆界', vi: 'Thiên Nghịch Động' },
+        pond: { zh: '聚灵池', vi: 'Tụ Linh Hồ' },
+        tea: { zh: '斩妖台', vi: 'Trảm Yêu Đài' },
+        gate: { zh: '山门', vi: 'Hằng Nhạc Sơn Môn' },
         library: { zh: '藏经阁', vi: 'Tàng Kinh Các' },
-        kitchen: { zh: '厨房', vi: 'Nhà bếp' },
-        garden: { zh: '菜园', vi: 'Vườn rau' },
-        pavilion: { zh: '望云亭', vi: 'Vọng Vân Đình' },
-        book: { zh: '簿', vi: 'Sổ ghi chép' }
+        kitchen: { zh: '炼丹房', vi: 'Luyện Đan Lô' },
+        garden: { zh: '灵药圃', vi: 'Linh Dược Phố' },
+        pavilion: { zh: '望仙台', vi: 'Vọng Tiên Đài' },
+        book: { zh: '册', vi: 'Sổ Tay Bí Tịch' }
     };
     // Sprite trên bản đồ của từng nhân vật: chỉ dùng làm chân dung khi World chưa có chân dung riêng.
     var FACE = { 'lao-quy': 'turtle', 'ho-nguyet': 'fox', 'tieu-mac': 'cat', 'tieu-ly': 'tanuki', keeper: 'keeper' };
@@ -1020,41 +1020,20 @@
         var on = state.settings.sfx || state.settings.music;
         ui.btnSound.textContent = on ? '🔊' : '🔇';
         ui.btnSound.setAttribute('aria-label', on ? 'Tắt âm thanh' : 'Bật âm thanh');
+        if (typeof updateQuestBadge === 'function') updateQuestBadge();
     }
 
     function hintText() {
-        if (!state.flags.intro) return 'Cháu về rồi à? Lại đây ta kể chuyện.';
-        if (state.scrolls === 0) return 'Lên Thư trai học cuộn chữ đầu tiên đi.';
-        if (hubScene()) return 'Lại đây, ta có chuyện muốn nói.';
-        // Khách lạ chỉ ở lại một đêm: nhắc trước việc sửa quán.
-        var stranger = strangerScene();
-        if (stranger) return (isVisit(stranger.tale) ? 'Có khách cũ ghé lại ở ' : 'Có khách lạ ở ') + placeName(stranger.tale.place) + '.';
-        if (ramLeft()) return 'Đêm rằm: trước Chính điện treo đèn đố chữ.';
-        // Thư của khách cũ ở Sơn môn, trang mới của sách Như Ngọc ở Tàng Kinh Các.
-        var letter = letterWaiting();
-        if (letter) return 'Có thư của ' + (guestOf(letter.from) || { name: letter.from }).name + ' ở Sơn môn.';
-        if (pageWaiting()) return 'Sách của Như Ngọc có trang mới. Lên Tàng Kinh Các.';
-        var r = Core.nextRepair(state);
-        if (r && state.lk >= r.cost) return 'Đủ linh khí rồi. Lên Chính điện: ' + r.name.toLowerCase() + '.';
-        var tea = teaScene();
-        if (tea) return guestOf(tea.guest).name + ' đang chờ ở Quán trà.';
-        var orders = openOrders();
-        if (orders.length > 1) return 'Có ' + orders.length + ' khách gọi món. Vào Nhà bếp nấu đi.';
-        if (orders.length) return guestOf(orders[0].guest).name + ' gọi món. Vào Nhà bếp nấu đi.';
-        var waiting = taleAwaitsNight();
-        if (waiting) {
-            var who = isVisit(waiting) ? 'Khách cũ hẹn ghé lại' : 'Khách lạ chỉ đến';
-            return nightMode === 'day'
-                ? who + ' khi trăng lên. Sổ đang đặt “Luôn ban ngày”.'
-                : who + ' khi trăng lên. Ra thắp đèn lồng ở Sơn môn.';
-        }
-        // Hàng ôn dồn: nhắc ôn ở Thư trai (có câu nghĩa, điền chữ) trước khi học cuộn mới.
+        if (!state.flags.tienNghichPrologue) return 'Tiểu tử Thiết Trụ! Lại đây lão phu chỉ điểm con đường nghịch thiên cải mệnh!';
+        if (state.scrolls === 0) return 'Vào Thiên Nghịch Không Gian luyện cuộn chữ Hán đầu tiên đi!';
+        if (hubScene()) return 'Tiểu tử, Tư Đồ Nam ta có chuyện trọng đại muốn truyền thụ.';
         var pile = Core.reviewBacklog(state, now());
-        if (pile) return 'Chữ cũ dồn lại rồi: ' + pile + ' chữ đến hạn ôn. Lên Thư trai ôn trước rồi hẵng học cuộn mới.';
+        if (pile) return 'Có ' + pile + ' đạo văn dồn lại chưa củng cố. Mau vào Thư trai ôn luyện cho đan điền vững vàng!';
         var dh = dueHint();
-        if (dh) return 'Có ' + dh.n + ' chữ đến hạn ôn. ' + (dh.place === 'study' ? 'Lên Thư trai ôn bài.' : 'Ra Hồ sen câu cá là ôn luôn.');
-        if (r) return 'Cần thêm ' + (r.cost - state.lk) + ' linh khí để ' + r.name.toLowerCase() + '. Đọc đúng chữ là có linh khí.';
-        return 'Quán sửa xong rồi. Học thêm chữ để đọc được nhiều hơn.';
+        if (dh) return 'Có ' + dh.n + ' chữ Hán đến hạn ôn tập thần thức. Mau vào tu luyện!';
+        var r = Core.nextRepair(state);
+        if (r && state.lk >= r.cost) return 'Linh khí đã dồi dào! Mau lên Tông Môn Điện tu bổ đại trận!';
+        return 'Tu vi tinh tiến rất tốt! Mau tới Trảm Yêu Đài chém yêu ma đoạt bảo vật!';
     }
 
     // Từ 3 chữ đến hạn thì nhắc ôn: ra Hồ sen khi câu cá ôn được hết (Core.fishDueList), còn chữ chờ câu chọn thì lên
@@ -1166,7 +1145,7 @@
     function openHubScene() {
         var sc = hubScene();
         if (sc) openScene(sc);
-        else toast('Lão Quy: ' + hintText());
+        else toast('Tư Đồ Nam: ' + hintText());
     }
 
     // Chạm nhân vật trên đảo.
@@ -5663,165 +5642,555 @@
         openSheet('tall');
     }
 
+
+    // =========================================================================
+    // HỆ THỐNG TU TIÊN NGHỊCH THIÊN: NHIỆM VỤ, TRẢM YÊU, TÔNG MÔN, TU VI
+    // =========================================================================
+
+    var questTab = 'chinh_tuyen'; // 'chinh_tuyen' | 'phu_tuyen'
+
+    var TIEN_NGHICH_MAIN_QUESTS = [
+        { id: 'mq_1', chap: 1, title: 'Chương 1: Hằng Nhạc Nhập Môn', reqDesc: 'Học 10 chữ Hán đầu tiên tại Hằng Nhạc Phái', req: 10, lk: 30, exp: 50, rewardName: 'Danh hiệu [Hằng Nhạc Tạp Dịch]' },
+        { id: 'mq_2', chap: 2, title: 'Chương 2: Thiên Nghịch Thức Tỉnh', reqDesc: 'Rơi xuống sơn động, thức tỉnh Thiên Nghịch Châu (50 chữ)', req: 50, lk: 50, exp: 100, rewardName: 'Pháp Bảo [Thiên Nghịch Châu]' },
+        { id: 'mq_3', chap: 3, title: 'Chương 3: Dẫn Lực Phi Kiếm', reqDesc: 'Tu luyện Dẫn Lực Thuật, ngự kiếm phi hành (150 chữ)', req: 150, lk: 80, exp: 180, rewardName: 'Vũ Khí [Hằng Nhạc Phi Kiếm]' },
+        { id: 'mq_4', chap: 4, title: 'Chương 4: Phong Vân Tông Môn', reqDesc: 'Đạt Ngưng Khí Đỉnh Phong, đoạt Càn Khôn Túi (350 chữ)', req: 350, lk: 120, exp: 300, rewardName: 'Bảo Vật [Túi Càn Khôn]' },
+        { id: 'mq_5', chap: 5, title: 'Chương 5: Trúc Cơ Đột Phá', reqDesc: 'Xung kích Trúc Cơ thành công, đan điền hóa dịch (650 chữ)', req: 650, lk: 200, exp: 500, rewardName: 'Chí Bảo [Trúc Cơ Đan]' },
+        { id: 'mq_6', chap: 6, title: 'Chương 6: Huyết Hải Tu Ma', reqDesc: 'Dấn thân Tu Ma Hải, lĩnh ngộ Định Thân Thuật (1,100 chữ)', req: 1100, lk: 300, exp: 800, rewardName: 'Thần Thông [Định Thân Thuật]' },
+        { id: 'mq_7', chap: 7, title: 'Chương 7: Bách Vạn Hồn Phiên', reqDesc: 'Luyện chế Hồn Phiên, thu thập vạn ma oán hồn (1,800 chữ)', req: 1800, lk: 500, exp: 1200, rewardName: 'Ma Bảo [Bách Vạn Hồn Phiên]' },
+        { id: 'mq_8', chap: 8, title: 'Chương 8: Lôi Kiếp Cực Cảnh', reqDesc: 'Dung hợp thiên lôi, sinh ra Cực Cảnh vô địch (2,800 chữ)', req: 2800, lk: 800, exp: 1800, rewardName: 'Sát Chiêu [Cực Cảnh Thần Thức]' },
+        { id: 'mq_9', chap: 9, title: 'Chương 9: Hóa Phàm Ngộ Đạo', reqDesc: 'Hóa Thần Hóa Phàm, ngộ Sinh Tử Ý Cảnh (4,200 chữ)', req: 4200, lk: 1200, exp: 2800, rewardName: 'Pháp Bảo [Khắc Mộc Thần Đao]' },
+        { id: 'mq_10', chap: 10, title: 'Chương 10: Nghịch Chuyển Luân Hồi', reqDesc: 'Đạp Thiên Chí Tôn, cứu sống Lý Mộ Uyển (11,092 từ HSK 9)', req: 11092, lk: 5000, exp: 10000, rewardName: 'Chí Tôn [Đạp Thiên Nghịch Mệnh]' }
+    ];
+
+    function updateQuestBadge() {
+        var badge = document.getElementById('badgeQuests');
+        if (!badge) return;
+        var count = 0;
+        var learned = Object.keys(state.items || {}).length;
+
+        // Kiểm tra chính tuyến
+        if (!state.claimedMainQuests) state.claimedMainQuests = {};
+        for (var i = 0; i < TIEN_NGHICH_MAIN_QUESTS.length; i++) {
+            var mq = TIEN_NGHICH_MAIN_QUESTS[i];
+            if (learned >= mq.req && !state.claimedMainQuests[mq.id]) count++;
+        }
+
+        // Kiểm tra phụ tuyến
+        if (state.dailyQuests && state.dailyQuests.list) {
+            for (var j = 0; j < state.dailyQuests.list.length; j++) {
+                var dq = state.dailyQuests.list[j];
+                if (dq.cur >= dq.target && !dq.claimed) count++;
+            }
+        }
+
+        if (count > 0) {
+            badge.textContent = count > 99 ? '99+' : count;
+            badge.hidden = false;
+        } else {
+            badge.hidden = true;
+        }
+    }
+
+    function showPrologueModal() {
+        var html = '<div class="lesson-top"><b style="color:var(--gold,#f0cf6a)">🔥 KHỞI TÂM NGHỊCH MỆNH</b>' +
+            '<button class="btn-ghost" data-act="closeSheet" style="margin-left:auto">Đóng</button></div>' +
+            '<div class="card" style="padding:20px 14px;background:linear-gradient(135deg,#fffdf7,#fbf1d8);border:2px solid #d97706;border-radius:16px;margin:10px 0">' +
+            '<div style="text-align:center;margin-bottom:12px">' +
+            '<img src="assets/items/icon_tu_tinh.png" style="width:64px;height:64px;filter:drop-shadow(0 0 10px #d97706)" alt="Thiên Nghịch Châu">' +
+            '<h2 style="font-size:1.5em;color:var(--red-2);margin:6px 0">Thiên Nghịch Châu Thức Tỉnh</h2>' +
+            '<span style="background:var(--red-2);color:#fff;font-weight:700;font-size:0.75em;padding:2px 8px;border-radius:10px">HẰNG NHẠC PHÁI · TRIỆU QUỐC</span>' +
+            '</div>' +
+            '<p style="font-size:0.95em;line-height:1.6;color:#1e293b;margin:8px 0">' +
+            'Thiếu niên Vương Lâm (Thiết Trụ) bái nhập Hằng Nhạc Phái, tư chất linh căn bình thường bị chúng trưởng lão chê bai là phế vật, phải làm tạp dịch gánh nước chẻ củi.<br><br>' +
+            'Một lần tuyệt vọng trượt chân xuống vực sâu, chàng may mắn nhặt được một hạt châu xám tro kỳ dị khắc 5 chiếc lá mây: <b>Thiên Nghịch Châu</b>!<br><br>' +
+            '<span style="color:#b91c1c;font-weight:700">Tư Đồ Nam</span> — Đệ Nhất Ma Đầu Triệu Quốc ngủ say vạn năm bên trong châu thức tỉnh, truyền thanh vang dội đan điền:' +
+            '</p>' +
+            '<div style="background:rgba(217,119,6,0.1);border-left:4px solid #d97706;padding:10px 12px;border-radius:6px;font-style:italic;font-weight:600;color:#92400e;margin:10px 0">' +
+            '“Tiểu tử Thiết Trụ! Tư chất ngươi dù là bùn nhão, nhưng có lão phu ở đây, lo gì không nghịch thiên cải mệnh! Muốn vấn đỉnh Tiên Đạo, trước tiên hãy tu luyện Đạo Văn Chữ Hán, luyện tự ngưng khí, chém yêu diệt ma, giẫm nát Thương Thiên!”' +
+            '</div>' +
+            '<button class="btn-primary btn-block" data-act="finishPrologue" style="font-size:1.1em;padding:12px;margin-top:14px;background:#d97706;border-color:#b45309">Bái Nhập Đạo Môn, Nghịch Thiên Tu Chân! ›</button>' +
+            '</div>';
+        ui.sheet.innerHTML = html;
+        openSheet('tall');
+    }
+
+    // =========================================================================
+    // 1. NHIỆM VỤ DASHBOARD (CHÍNH TUYẾN & PHỤ TUYẾN)
+    // =========================================================================
     function openQuestDashboard() {
         place = 'quests';
         updateBottomNavActive('quests');
         ensureDailyQuests(state, now());
-        checkAchievements();
-        var r = Core.getRealm ? Core.getRealm(state.exp || 0) : { level: 1, name: 'Sơ Nhập Đạo Môn', title: 'Đạo Đồng', icon: '🌱', minExp: 0, maxExp: 100 };
-        var curExp = (state.exp || 0) - r.minExp;
-        var reqExp = r.maxExp - r.minExp;
-        var expPct = Math.min(100, Math.round((curExp / (reqExp || 1)) * 100));
+        if (!state.claimedMainQuests) state.claimedMainQuests = {};
+        var learnedCount = Object.keys(state.items || {}).length;
 
-        var qList = state.dailyQuests.list;
-        var doneCount = 0;
-        for (var i = 0; i < qList.length; i++) {
-            if (qList[i].cur >= qList[i].target) doneCount++;
-        }
-        var allDone = doneCount === qList.length;
-
-        var html = '<div class="sheet-title"><span class="zh">道</span><b>Lộ Trình & Nhiệm Vụ Tu Luyện</b>' +
+        var html = '<div class="sheet-title"><span class="zh">令</span><b>Đạo Lệnh & Nhiệm Vụ Tu Luyện</b>' +
             '<button class="btn-ghost close" data-act="closeSheet">Đóng</button></div>' +
-            '<div class="card" style="background:linear-gradient(135deg,#fcf8ec,#f5e9cb);border:2px solid var(--line);border-radius:14px;margin-bottom:12px;padding:14px">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center">' +
-            '<div>' +
-            '<div style="font-size:0.8em;font-weight:700;color:var(--ink-2)">CẢNH GIỚI TU HỌC</div>' +
-            '<div style="font-size:1.25em;font-weight:800;color:var(--red-2);display:flex;align-items:center;gap:6px">' +
-            '<span>' + r.icon + '</span><span>' + esc(r.name) + '</span>' +
-            '<span style="font-size:0.7em;background:var(--red-2);color:#fff;padding:1px 6px;border-radius:8px">Cấp ' + r.level + '</span>' +
-            '</div></div>' +
-            '<div style="text-align:right">' +
-            '<div style="font-size:0.8em;font-weight:700;color:var(--ink-2)">CHUỖI HỌC TẬP</div>' +
-            '<div style="font-size:1.2em;font-weight:800;color:#d97706">🔥 ' + ((state.streak && state.streak.days) || 1) + ' Ngày</div>' +
-            '</div></div>' +
-            '<div style="margin-top:10px">' +
-            '<div style="display:flex;justify-content:space-between;font-size:0.75em;font-weight:700;margin-bottom:3px">' +
-            '<span>Tu Vi (EXP): ' + (state.exp || 0) + ' / ' + r.maxExp + '</span>' +
-            '<span>' + expPct + '%</span></div>' +
-            '<div style="height:8px;background:rgba(0,0,0,0.1);border-radius:4px;overflow:hidden;border:1px solid var(--line)">' +
-            '<div style="height:100%;width:' + expPct + '%;background:linear-gradient(90deg,#d97706,#16a34a);border-radius:3px"></div>' +
-            '</div></div></div>';
-
-        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0 6px 0">' +
-            '<h3 style="margin:0;font-size:1.05em">Nhiệm Vụ Phiên Học (4 Tiếng)</h3>' +
-            '<span style="font-size:0.85em;font-weight:700;color:var(--ink-2)">Hoàn thành: ' + doneCount + ' / ' + qList.length + '</span>' +
+            '<div class="tab-bar">' +
+            '<button class="tab-btn ' + (questTab === 'chinh_tuyen' ? 'active' : '') + '" data-act="setQuestTab" data-tab="chinh_tuyen">⚔️ Chính Tuyến Tiên Nghịch</button>' +
+            '<button class="tab-btn ' + (questTab === 'phu_tuyen' ? 'active' : '') + '" data-act="setQuestTab" data-tab="phu_tuyen">📜 Phụ Tuyến Hàng Ngày</button>' +
             '</div>';
 
-        html += '<div style="display:flex;flex-direction:column;gap:8px">';
-        for (var j = 0; j < qList.length; j++) {
-            var q = qList[j];
-            var isDone = q.cur >= q.target;
-            html += '<div class="quest-item' + (isDone ? ' done' : '') + '">' +
-                '<div style="flex:1;min-width:0">' +
-                '<div style="font-weight:700;font-size:0.95em;display:flex;align-items:center;gap:6px">' +
-                '<span>' + (isDone ? '✅' : '🎯') + '</span>' +
-                '<span>' + esc(q.title) + '</span>' +
-                '<span style="font-size:0.75em;color:var(--jade);font-weight:600">+' + q.lk + ' 灵 · +' + q.exp + ' 修</span>' +
+        if (questTab === 'chinh_tuyen') {
+            html += '<p class="small muted" style="margin:2px 0 10px 0">10 Mốc cốt truyện Tiên Nghịch theo bước chân Vương Lâm từ Hằng Nhạc Phái đến Đạp Thiên Cảnh (11,092 từ HSK 9):</p>' +
+                '<div style="display:flex;flex-direction:column;gap:10px">';
+
+            for (var i = 0; i < TIEN_NGHICH_MAIN_QUESTS.length; i++) {
+                var mq = TIEN_NGHICH_MAIN_QUESTS[i];
+                var isCompleted = learnedCount >= mq.req;
+                var isClaimed = !!state.claimedMainQuests[mq.id];
+                var pct = Math.min(100, Math.round((learnedCount / mq.req) * 100));
+
+                html += '<div class="quest-item' + (isClaimed ? ' done' : '') + '" style="border:1.5px solid ' + (isClaimed ? 'var(--jade)' : (isCompleted ? '#d97706' : 'var(--line)')) + '">' +
+                    '<div style="flex:1;min-width:0">' +
+                    '<div style="font-weight:700;font-size:0.95em;color:' + (isClaimed ? 'var(--jade)' : 'var(--ink)') + '">' + esc(mq.title) + '</div>' +
+                    '<div class="small muted" style="font-size:0.82em;margin-top:2px">' + esc(mq.reqDesc) + '</div>' +
+                    '<div style="display:flex;align-items:center;gap:8px;margin-top:4px">' +
+                    '<div style="flex:1;height:6px;background:rgba(0,0,0,0.08);border-radius:3px;overflow:hidden">' +
+                    '<div style="height:100%;width:' + pct + '%;background:' + (isClaimed ? 'var(--jade)' : '#d97706') + '"></div>' +
+                    '</div>' +
+                    '<span style="font-size:0.75em;font-weight:700">' + learnedCount + ' / ' + mq.req + ' (' + pct + '%)</span>' +
+                    '</div>' +
+                    '<div style="font-size:0.78em;color:#b45309;font-weight:700;margin-top:4px">🎁 Thưởng: +' + mq.lk + ' 💎 · +' + mq.exp + ' ✨ · ' + esc(mq.rewardName) + '</div>' +
+                    '</div>' +
+                    '<div>' +
+                    (isClaimed ? '<span style="font-size:0.8em;color:var(--jade);font-weight:700">✓ Đã nhận</span>'
+                        : (isCompleted ? '<button class="btn-primary" data-act="claimMainQuest" data-id="' + esc(mq.id) + '" style="font-size:0.8em;padding:6px 12px;background:#d97706;border-color:#b45309">Nhận Thưởng</button>'
+                            : '<span style="font-size:0.75em;color:#94a3b8;font-weight:700">Chưa xong</span>')) +
+                    '</div></div>';
+            }
+            html += '</div>';
+        } else {
+            var qList = state.dailyQuests.list;
+            var doneCount = 0;
+            for (var j = 0; j < qList.length; j++) {
+                if (qList[j].cur >= qList[j].target) doneCount++;
+            }
+            var allDone = doneCount === qList.length;
+
+            html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+                '<p class="small muted" style="margin:0">Hoàn thành các nhiệm vụ tu hành trong ngày:</p>' +
+                '<span style="font-size:0.82em;font-weight:700;color:var(--ink-2)">' + doneCount + ' / ' + qList.length + ' hoàn thành</span>' +
                 '</div>' +
-                '<div class="small muted" style="margin-top:2px;font-size:0.82em">' + esc(q.desc) + '</div>' +
-                '<div style="font-size:0.8em;font-weight:700;margin-top:4px;color:' + (isDone ? 'var(--jade)' : 'var(--ink-2)') + '">' +
-                'Tiến độ: ' + q.cur + ' / ' + q.target + (isDone ? ' (Đã xong)' : '') +
-                '</div></div>' +
-                '<div>' +
-                (isDone ? '<button class="btn" disabled style="opacity:0.6;font-size:0.85em;padding:6px 10px">✓ Xong</button>'
-                    : '<button class="btn-primary" data-act="' + esc(q.act) + '" style="font-size:0.85em;padding:6px 12px">' + esc(q.btnText) + '</button>') +
-                '</div></div>';
+                '<div style="display:flex;flex-direction:column;gap:8px">';
+
+            for (var k = 0; k < qList.length; k++) {
+                var q = qList[k];
+                var isDone = q.cur >= q.target;
+                html += '<div class="quest-item' + (isDone ? ' done' : '') + '">' +
+                    '<div style="flex:1;min-width:0">' +
+                    '<div style="font-weight:700;font-size:0.95em">' + (isDone ? '✅ ' : '🎯 ') + esc(q.title) +
+                    '<span style="font-size:0.75em;color:var(--jade);margin-left:6px">+' + q.lk + ' 💎 · +' + q.exp + ' ✨</span></div>' +
+                    '<div class="small muted" style="font-size:0.82em;margin-top:2px">' + esc(q.desc) + '</div>' +
+                    '<div style="font-size:0.78em;font-weight:700;color:' + (isDone ? 'var(--jade)' : 'var(--ink-2)') + ';margin-top:4px">' +
+                    'Tiến độ: ' + q.cur + ' / ' + q.target + (isDone ? ' (Đã xong)' : '') +
+                    '</div></div>' +
+                    '<div>' +
+                    (isDone ? '<button class="btn" disabled style="opacity:0.6;font-size:0.8em;padding:5px 10px">✓ Xong</button>'
+                        : '<button class="btn-primary" data-act="' + esc(q.act) + '" style="font-size:0.8em;padding:5px 10px">' + esc(q.btnText) + '</button>') +
+                    '</div></div>';
+            }
+            html += '</div>';
+
+            html += '<div class="card" style="margin-top:12px;text-align:center;background:' + (allDone && !state.dailyQuests.claimed ? 'linear-gradient(135deg,#fef3c7,#fde68a)' : 'var(--paper-2)') + ';border:2px dashed ' + (allDone ? '#d97706' : 'var(--line)') + ';border-radius:14px;padding:12px">' +
+                '<div style="font-size:2em;margin-bottom:2px">' + (state.dailyQuests.claimed ? '📭' : '🎁') + '</div>' +
+                '<div style="font-weight:700;font-size:1em">Rương Tu Hành Hằng Ngày</div>' +
+                '<p class="small muted" style="margin:2px 0 8px 0">Hoàn thành tất cả nhiệm vụ trong ngày để mở rương linh khí và tu vi.</p>' +
+                (state.dailyQuests.claimed ? '<button class="btn" disabled style="font-size:0.85em;opacity:0.6">Đã nhận hôm nay ✓</button>'
+                    : (allDone ? '<button class="btn-primary" data-act="claimDailyChest" style="background:#d97706;border-color:#b45309;font-weight:700;font-size:0.95em;padding:6px 16px">Mở Rương (+100 💎, +80 ✨)</button>'
+                        : '<button class="btn" disabled style="font-size:0.82em;opacity:0.6">Chưa hoàn thành đủ</button>')) +
+                '</div>';
+        }
+
+        ui.sheet.innerHTML = html;
+        openSheet('tall');
+        updateQuestBadge();
+    }
+
+    // =========================================================================
+    // 2. TRẢM YÊU DASHBOARD & MINI-GAME CHIẾN ĐẤU
+    // =========================================================================
+    var combatState = {
+        active: false,
+        mob: null,
+        playerHp: 100,
+        playerMaxHp: 100,
+        mobHp: 100,
+        mobMaxHp: 100,
+        question: null,
+        turn: 1,
+        startTime: 0,
+        isBoss: false
+    };
+
+    function openHuntDashboard() {
+        place = 'hunt';
+        updateBottomNavActive('hunt');
+        var stats = Core.calcCombatStats ? Core.calcCombatStats(state) : { cp: 100, hp: 200, atk: 30, def: 10, mind: 10 };
+        var mobs = (Core.MOBS) || [];
+        var bosses = (Core.BOSSES) || [];
+
+        var html = '<div class="sheet-title"><span class="zh">斩</span><b>Trảm Yêu Đài & Đấu Pháp Boss</b>' +
+            '<button class="btn-ghost close" data-act="closeSheet">Đóng</button></div>' +
+            '<div class="card" style="background:linear-gradient(135deg,#1e293b,#0f172a);color:#fff;border-radius:14px;padding:12px;margin-bottom:12px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<div>' +
+            '<div style="font-size:0.75em;color:#94a3b8;font-weight:700">LỰC CHIẾN TU CHÂN</div>' +
+            '<div style="font-size:1.6em;font-weight:900;color:#fbbf24">⚔️ ' + stats.cp + '</div>' +
+            '</div>' +
+            '<div style="display:flex;gap:12px;font-size:0.85em;text-align:right">' +
+            '<div><span style="color:#f87171">HP</span>: ' + stats.hp + '<br><span style="color:#60a5fa">ATK</span>: ' + stats.atk + '</div>' +
+            '<div><span style="color:#34d399">DEF</span>: ' + stats.def + '<br><span style="color:#c084fc">MIND</span>: ' + stats.mind + '</div>' +
+            '</div></div></div>';
+
+        html += '<h3 style="margin:8px 0 6px 0;font-size:1.05em">👹 Yêu Thú Thử Thách (Săn Quái Rơi Đồ)</h3>' +
+            '<div style="display:flex;flex-direction:column;gap:8px">';
+
+        for (var i = 0; i < mobs.length; i++) {
+            var m = mobs[i];
+            html += '<div class="hunt-card">' +
+                '<div class="mob-avatar"><img src="' + esc(m.img) + '" alt="' + esc(m.name) + '"></div>' +
+                '<div style="flex:1;min-width:0">' +
+                '<div style="font-weight:700;font-size:0.95em">' + esc(m.name) + '</div>' +
+                '<div style="display:flex;gap:6px;margin:2px 0">' +
+                '<span class="stat-pill" style="color:#b91c1c">Cảnh: ' + esc(m.realm) + '</span>' +
+                '<span class="stat-pill" style="color:#16a34a">HP ' + m.hp + '</span>' +
+                '<span class="stat-pill" style="color:#2563eb">ATK ' + m.atk + '</span>' +
+                '</div>' +
+                '<div class="small muted" style="font-size:0.78em">Rơi: ' + esc(m.drop) + ' (+' + m.lk + ' 💎, +' + m.exp + ' ✨)</div>' +
+                '</div>' +
+                '<button class="btn-primary" data-act="startCombat" data-id="' + esc(m.id) + '" style="font-size:0.82em;padding:6px 12px">Khiêu Chiến</button>' +
+                '</div>';
         }
         html += '</div>';
 
-        html += '<div class="card" style="margin-top:12px;text-align:center;background:' + (allDone && !state.dailyQuests.claimed ? 'linear-gradient(135deg,#fef3c7,#fde68a)' : 'var(--paper-2)') + ';border:2px dashed ' + (allDone ? '#d97706' : 'var(--line)') + ';border-radius:14px;padding:14px">' +
-            '<div style="font-size:2em;margin-bottom:4px">' + (state.dailyQuests.claimed ? '📭' : '🎁') + '</div>' +
-            '<div style="font-weight:700;font-size:1.05em">Rương Tu Luyện Hàng Ngày</div>' +
-            '<p class="small muted" style="margin:4px 0 10px 0">Hoàn thành cả 4 nhiệm vụ trong ngày để mở rương thưởng lớn.</p>' +
-            (state.dailyQuests.claimed ? '<button class="btn" disabled style="font-size:0.9em;opacity:0.6">Đã nhận hôm nay ✓</button>'
-                : (allDone ? '<button class="btn-primary" data-act="claimDailyChest" style="background:#d97706;border-color:#b45309;font-weight:700;font-size:1em;padding:8px 18px">Mở Rương (+100 灵, +80 修)</button>'
-                    : '<button class="btn" disabled style="font-size:0.85em;opacity:0.6">Chưa đủ 4 nhiệm vụ</button>')) +
+        html += '<h3 style="margin:16px 0 6px 0;font-size:1.05em;color:#b91c1c">👑 Đại Boss Cốt Truyện Vượt Cảnh</h3>' +
+            '<div style="display:flex;flex-direction:column;gap:10px">';
+
+        for (var j = 0; j < bosses.length; j++) {
+            var b = bosses[j];
+            html += '<div class="hunt-card" style="border:2px solid #b91c1c;background:#fff5f5">' +
+                '<div class="mob-avatar" style="border-color:#f87171"><img src="' + esc(b.img) + '" alt="' + esc(b.name) + '"></div>' +
+                '<div style="flex:1;min-width:0">' +
+                '<div style="font-weight:800;font-size:1em;color:#991b1b">' + esc(b.name) + '</div>' +
+                '<div class="small muted" style="font-size:0.8em;margin:2px 0">' + esc(b.desc) + '</div>' +
+                '<div style="font-size:0.78em;font-weight:700;color:#dc2626">Thưởng: ' + esc(b.reward) + ' (+' + b.lk + ' 💎, +' + b.exp + ' ✨)</div>' +
+                '</div>' +
+                '<button class="btn-primary" data-act="startBossCombat" data-id="' + esc(b.id) + '" style="background:#dc2626;border-color:#b91c1c;font-size:0.82em;padding:6px 12px">Đại Chiến</button>' +
+                '</div>';
+        }
+        html += '</div>';
+
+        ui.sheet.innerHTML = html;
+        openSheet('tall');
+    }
+
+    function startCombat(id, isBoss) {
+        var list = isBoss ? (Core.BOSSES || []) : (Core.MOBS || []);
+        var target = null;
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].id === id) { target = list[i]; break; }
+        }
+        if (!target) return;
+
+        var stats = Core.calcCombatStats ? Core.calcCombatStats(state) : { hp: 200, atk: 30 };
+        combatState.active = true;
+        combatState.mob = target;
+        combatState.isBoss = isBoss;
+        combatState.playerMaxHp = stats.hp;
+        combatState.playerHp = stats.hp;
+        combatState.mobMaxHp = target.hp;
+        combatState.mobHp = target.hp;
+        combatState.turn = 1;
+
+        nextCombatTurn();
+    }
+
+    function nextCombatTurn() {
+        if (!combatState.active) return;
+        var known = Object.keys(state.items || {});
+        var pool = known.length >= 6 ? known : Object.keys(DECK.byChar).slice(0, 50);
+        var ch = pool[Math.floor(Math.random() * pool.length)];
+        var e = DECK.byChar[ch] || { py: '', m: '', hv: '' };
+
+        var distractors = [];
+        while (distractors.length < 3) {
+            var randCh = pool[Math.floor(Math.random() * pool.length)];
+            if (randCh !== ch && distractors.indexOf(randCh) === -1) distractors.push(randCh);
+        }
+        var opts = [ch].concat(distractors).sort(function() { return 0.5 - Math.random(); });
+
+        combatState.question = {
+            ch: ch,
+            e: e,
+            options: opts,
+            answered: false
+        };
+        combatState.startTime = Date.now();
+        renderCombatModal();
+    }
+
+    function renderCombatModal() {
+        var m = combatState.mob;
+        var mobHpPct = Math.max(0, Math.min(100, Math.round((combatState.mobHp / combatState.mobMaxHp) * 100)));
+        var playerHpPct = Math.max(0, Math.min(100, Math.round((combatState.playerHp / combatState.playerMaxHp) * 100)));
+        var q = combatState.question;
+
+        var html = '<div class="lesson-top">' +
+            '<b>⚔️ Trảm Yêu: ' + esc(m.name) + ' (Hiệp ' + combatState.turn + ')</b>' +
+            '<button class="btn-ghost" data-act="fleeCombat" style="margin-left:auto">Rút lui</button></div>' +
+            '<div class="card" style="padding:14px;background:#f8fafc;border:2px solid var(--line);border-radius:14px;margin:8px 0">' +
+            '<div style="display:flex;align-items:center;gap:12px">' +
+            '<div class="mob-avatar" style="width:68px;height:68px"><img src="' + esc(m.img) + '" style="width:56px;height:56px" alt="' + esc(m.name) + '"></div>' +
+            '<div style="flex:1;min-width:0">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<b style="font-size:1.05em;color:#b91c1c">' + esc(m.name) + '</b>' +
+            '<span style="font-size:0.8em;font-weight:700">' + combatState.mobHp + ' / ' + combatState.mobMaxHp + ' HP</span>' +
+            '</div>' +
+            '<div class="hp-bar-wrap"><div class="hp-bar-fill" style="width:' + mobHpPct + '%;background:#dc2626"></div></div>' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">' +
+            '<b style="font-size:0.95em;color:#16a34a">Vương Lâm (Ngươi)</b>' +
+            '<span style="font-size:0.8em;font-weight:700">' + combatState.playerHp + ' / ' + combatState.playerMaxHp + ' HP</span>' +
+            '</div>' +
+            '<div class="hp-bar-wrap"><div class="hp-bar-fill" style="width:' + playerHpPct + '%;background:#16a34a"></div></div>' +
+            '</div></div></div>';
+
+        html += '<div class="card" style="text-align:center;padding:16px 10px;margin:10px 0;background:#fffdf7;border:2px solid var(--line);border-radius:14px">' +
+            '<div class="small muted" style="margin-bottom:4px">Xuất chiêu thần thông bằng cách chọn đúng nghĩa / Pinyin:</div>' +
+            '<div class="zh" style="font-size:3.5em;font-weight:800;color:var(--ink)">' + esc(q.ch) + '</div>' +
+            '<div class="small muted" style="font-size:0.8em;margin-top:2px">Thời gian < 3s được tính Bạo Kích x1.5 sát thương!</div>' +
+            '</div>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+
+        for (var i = 0; i < q.options.length; i++) {
+            var optCh = q.options[i];
+            var optE = DECK.byChar[optCh] || { py: '', hv: '', m: '' };
+            html += '<button class="btn" style="padding:10px 6px;display:flex;flex-direction:column;align-items:center" data-act="answerCombat" data-ch="' + esc(optCh) + '">' +
+                '<b style="color:var(--red-2);font-size:1.05em">' + esc(optE.py || optCh) + '</b>' +
+                '<span style="font-size:0.75em;color:#555">' + esc(optE.hv || optE.m) + '</span>' +
+                '</button>';
+        }
+        html += '</div>';
+
+        ui.sheet.innerHTML = html;
+        openSheet('tall');
+    }
+
+    function answerCombat(chosenCh) {
+        if (!combatState.active) return;
+        var q = combatState.question;
+        var m = combatState.mob;
+        var stats = Core.calcCombatStats ? Core.calcCombatStats(state) : { atk: 30 };
+        var isCorrect = chosenCh === q.ch;
+        var elapsed = (Date.now() - combatState.startTime) / 1000;
+        var isCrit = elapsed < 3.0;
+
+        if (isCorrect) {
+            var dmg = Math.round(stats.atk * (isCrit ? 1.5 : 1.0));
+            combatState.mobHp = Math.max(0, combatState.mobHp - dmg);
+            sfx('perfect');
+            toast('⚡ ' + (isCrit ? 'BẠO KÍCH! ' : '') + 'Ngươi xuất kiếm gây ' + dmg + ' sát thương!', 2000);
+        } else {
+            combatState.playerHp = Math.max(0, combatState.playerHp - m.atk);
+            sfx('bad');
+            toast('💥 Trả lời sai! ' + m.name + ' phản kích trúng ngươi -' + m.atk + ' HP!', 2000);
+        }
+
+        // Kiểm tra kết quả trận đấu
+        if (combatState.mobHp <= 0) {
+            combatState.active = false;
+            state.lk += m.lk;
+            addExp(m.exp, 'Trảm yêu: ' + m.name);
+            recordQuestProgress('game', 1);
+
+            var winHtml = '<div class="lesson-top"><b>🎉 Chiến Thắng Trảm Yêu!</b>' +
+                '<button class="btn-ghost" data-act="openHunt" style="margin-left:auto">Đóng</button></div>' +
+                '<div class="card" style="text-align:center;padding:24px 14px;background:linear-gradient(135deg,#fcf8ec,#fef3c7);border:2px solid #d97706;border-radius:16px;margin:12px 0">' +
+                '<div style="font-size:3.5em;margin-bottom:6px">🏆</div>' +
+                '<h3>Đã Tiêu Diệt ' + esc(m.name) + '!</h3>' +
+                '<p class="small" style="color:var(--ink);margin:6px 0 12px 0">Uy danh vang dội tông môn, đan điền hấp thu tinh hoa linh thú.</p>' +
+                '<div style="background:rgba(217,119,6,0.1);border:1.5px dashed #d97706;border-radius:10px;padding:12px;margin-bottom:14px;text-align:left">' +
+                '<b>Chiến Lợi Phẩm Thu Được:</b><br>' +
+                '• +' + m.lk + ' 💎 Linh Khí<br>' +
+                '• +' + m.exp + ' ✨ Điểm Tu Vi<br>' +
+                '• Vật phẩm rơi: <b style="color:var(--red-2)">' + esc(m.drop || m.reward) + '</b>' +
+                '</div>' +
+                '<div class="row" style="justify-content:center;gap:10px">' +
+                '<button class="btn-primary" data-act="openHunt">Về Trảm Yêu Đài</button>' +
+                '</div></div>';
+            ui.sheet.innerHTML = winHtml;
+            openSheet('tall');
+            return;
+        }
+
+        if (combatState.playerHp <= 0) {
+            combatState.active = false;
+            sfx('bad');
+            var loseHtml = '<div class="lesson-top"><b>💀 Thất Bại Rút Lui</b>' +
+                '<button class="btn-ghost" data-act="openHunt" style="margin-left:auto">Đóng</button></div>' +
+                '<div class="card" style="text-align:center;padding:24px 14px;background:#fef2f2;border:2px solid #ef4444;border-radius:16px;margin:12px 0">' +
+                '<div style="font-size:3.5em;margin-bottom:6px">💨</div>' +
+                '<h3>Ngươi Đã Kiệt Sức!</h3>' +
+                '<p class="small" style="color:#991b1b;margin:6px 0 12px 0">Tư Đồ Nam lập tức thi triển Định Thân Thuật phá vây đưa ngươi về Động Phủ an toàn!</p>' +
+                '<div style="font-style:italic;color:#7f1d1d;font-size:0.85em;margin-bottom:14px">“Tiểu tử, công pháp chưa đủ vững vàng, mau về ôn tập chữ Hán rồi hãy tái chiến!”</div>' +
+                '<button class="btn-primary" data-act="openHunt" style="background:#dc2626;border-color:#b91c1c">Dưỡng Thương Về Trảm Yêu Đài</button>' +
+                '</div>';
+            ui.sheet.innerHTML = loseHtml;
+            openSheet('tall');
+            return;
+        }
+
+        combatState.turn++;
+        nextCombatTurn();
+    }
+
+    // =========================================================================
+    // 3. TU LUYỆN DASHBOARD
+    // =========================================================================
+    function openStudyDashboard() {
+        place = 'study';
+        updateBottomNavActive('study');
+        var pile = Core.reviewBacklog(state, now());
+        var dueCount = Core.dueList(state, now()).length;
+        var learnedCount = Object.keys(state.items || {}).length;
+
+        var html = '<div class="sheet-title"><span class="zh">修</span><b>Thiên Nghịch Không Gian · Tu Luyện Đại Đạo</b>' +
+            '<button class="btn-ghost close" data-act="closeSheet">Đóng</button></div>' +
+            '<p class="small muted" style="margin:2px 0 12px 0">Thời gian bên trong Thiên Nghịch gia tốc gấp 10 lần. Nơi tôi luyện chữ Hán, bộ thủ và thần thông chống học vẹt:</p>' +
+            '<div style="display:flex;flex-direction:column;gap:10px">' +
+
+            // Cuộn học mới & Ôn tập SRS
+            '<div class="card" style="border:2px solid #d97706;background:linear-gradient(135deg,#fffdf7,#fef3c7);border-radius:14px;padding:14px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<div>' +
+            '<h3 style="margin:0;color:#b45309"><span class="zh">卷</span>Cuộn Học Chữ Mới (5 Chữ)</h3>' +
+            '<div class="small muted" style="margin-top:2px">Học mặt chữ, Pinyin, âm Hán Việt và tập viết nét thuận.</div>' +
+            '</div>' +
+            '<span style="font-size:0.85em;font-weight:700;color:#b45309">' + learnedCount + ' Chữ</span>' +
+            '</div>' +
+            '<div class="row" style="gap:8px;margin-top:10px">' +
+            '<button class="btn-primary" data-act="startNextScroll" style="flex:1;background:#d97706;border-color:#b45309">📖 Mở Cuộn Tiếp Theo</button>' +
+            '<button class="btn" data-act="openQuizFromQuest" style="flex:1;font-weight:700">🔄 Ôn Tập SRS (' + dueCount + ')</button>' +
+            '</div></div>' +
+
+            // Đấu pháp Tốc Lôi
+            '<div class="card" style="border:2px solid #b91c1c;background:#fff5f5;border-radius:14px;padding:12px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<h3 style="margin:0;color:#991b1b"><span class="zh">⚡</span>Đấu Pháp Tốc Lôi (60 Giây)</h3>' +
+            '<span style="background:#b91c1c;color:#fff;padding:2px 8px;border-radius:10px;font-size:0.75em;font-weight:700">TỐC ĐỘ</span>' +
+            '</div>' +
+            '<p class="small muted" style="margin:4px 0 8px 0">Trắc nghiệm phản xạ nhận diện chữ Hán siêu tốc trong 60 giây theo chuẩn HanziGuru.</p>' +
+            '<button class="btn-primary btn-block" data-act="startFastQuiz" style="background:#dc2626;border-color:#b91c1c">⚡ Khiêu Chiến Tốc Lôi (60s)</button>' +
+            '</div>' +
+
+            // 5 Tuyệt kỹ HanziGuru
+            '<div class="card" style="border:2px solid #0284c7;background:#f0f9ff;border-radius:14px;padding:12px">' +
+            '<h3 style="margin:0 0 4px 0;color:#0369a1"><span class="zh">🛠️</span>5 Tuyệt Kỹ HanziGuru Xây Nền</h3>' +
+            '<p class="small muted" style="margin:0 0 8px 0">Kho dữ liệu kinh điển giúp hiểu sâu bản chất chữ Hán, phát âm chuẩn và khẩu ngữ linh hoạt:</p>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">' +
+            '<button class="btn" data-act="openCore100" style="font-size:0.82em;padding:8px 4px;font-weight:700">🧱 100 Chữ Trúc Cơ</button>' +
+            '<button class="btn" data-act="openRadicals214" style="font-size:0.82em;padding:8px 4px;font-weight:700">📜 214 Bộ Thủ Đạo Văn</button>' +
+            '<button class="btn" data-act="openPhoneticFamilies" style="font-size:0.82em;padding:8px 4px;font-weight:700">🗡️ Vạn Kiếm Quy Tông</button>' +
+            '<button class="btn" data-act="openMeasureWords" style="font-size:0.82em;padding:8px 4px;font-weight:700">⚖️ Lượng Từ Trực Quan</button>' +
+            '</div>' +
+            '<button class="btn btn-block" data-act="openPinyinMatrix" style="margin-top:6px;font-weight:700;color:#0284c7">🌐 Đại La Âm Trận (Bảng Ma Trận Pinyin)</button>' +
+            '</div>' +
+
+            // Game Ghép Từ & Đố Ngữ Cảnh
+            '<div class="row" style="gap:8px">' +
+            '<button class="btn" data-act="openCompoundGame" style="flex:1;padding:10px 4px;font-weight:700">🧩 Ghép Từ (2-3 chữ)</button>' +
+            '<button class="btn" data-act="openClozeGame" style="flex:1;padding:10px 4px;font-weight:700">📖 Đố Câu Ngữ Cảnh</button>' +
+            '</div>' +
+            '<button class="btn btn-block" data-act="openHanziBlueprint" style="font-weight:700">📘 Xem Cẩm Nang Cấu Trúc Câu Vàng</button>' +
             '</div>';
 
         ui.sheet.innerHTML = html;
         openSheet('tall');
     }
 
-    function openPracticeHub() {
-        place = 'practice';
-        updateBottomNavActive('practice');
-        var html = '<div class="sheet-title"><span class="zh">练</span><b>Trung Tâm Luyện Tập & Đấu Pháp Tiên Nghịch</b>' +
+    // =========================================================================
+    // 4. TÔNG MÔN DASHBOARD
+    // =========================================================================
+    function openSectDashboard() {
+        place = 'sect';
+        updateBottomNavActive('sect');
+        var r = Core.getRealm ? Core.getRealm(state.exp || 0) : { level: 1 };
+        var sects = (Core.SECTS || []);
+        var curSect = sects[0];
+        for (var i = sects.length - 1; i >= 0; i--) {
+            if (r.level >= sects[i].realmReq) { curSect = sects[i]; break; }
+        }
+
+        if (!state.sectData) {
+            state.sectData = { lastHarvest: Date.now(), arrayLevel: 1 };
+        }
+        var elapsedHours = Math.floor((Date.now() - (state.sectData.lastHarvest || Date.now())) / 3600000);
+        var harvestLk = Math.min(100, Math.max(10, elapsedHours * (10 + state.sectData.arrayLevel * 2)));
+
+        var html = '<div class="sheet-title"><span class="zh">宗</span><b>Tông Môn & Động Phủ Tu Chân</b>' +
             '<button class="btn-ghost close" data-act="closeSheet">Đóng</button></div>' +
-            '<p class="small muted" style="margin:4px 0 12px 0">Hệ thống đấu pháp luyện tập theo 5 công cụ HanziGuru & 12 Pháp Bảo Tiên Nghịch (Chống học vẹt, tiến tới HSK 9 - 11,092 từ).</p>' +
-            '<div style="display:flex;flex-direction:column;gap:10px">' +
-            
-            // 0. ĐẤU PHÁP TỐC LÔI (HanziGuru Speed Challenge)
-            '<div class="card" style="border:2px solid #b91c1c;background:linear-gradient(135deg,#fffdf7,#fee2e2);border-radius:12px;padding:12px">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center">' +
-            '<h3 style="margin:0;color:#991b1b"><span class="zh">⚡</span>Đấu Pháp Tốc Lôi (60 Giây)</h3>' +
-            '<span style="background:#b91c1c;color:#fff;padding:2px 8px;border-radius:10px;font-size:0.75em;font-weight:700">HANZIGURU SPEED QUIZ</span>' +
-            '</div>' +
-            '<p class="small muted" style="margin:6px 0 10px 0">Trắc nghiệm phản xạ nhận diện chữ Hán siêu tốc trong 60 giây, nhận linh khí và tu vi dồi dào!</p>' +
-            '<button class="btn-primary btn-block" data-act="startFastQuiz" style="background:#dc2626;border-color:#b91c1c">⚡ Khiêu chiến Tốc Lôi (60s)</button>' +
-            '</div>' +
-
-            // 1. KHO BÁU & PHÁP BẢO TIÊN NGHỊCH
-            '<div class="card" style="border:2px solid #d97706;background:linear-gradient(135deg,#fffdf7,#fef3c7);border-radius:12px;padding:12px">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center">' +
-            '<h3 style="margin:0;color:#b45309"><span class="zh">🔮</span>Kho Báu & Pháp Bảo Tiên Nghịch</h3>' +
-            '<span style="background:#d97706;color:#fff;padding:2px 8px;border-radius:10px;font-size:0.75em;font-weight:700">12 BẢO VẬT</span>' +
-            '</div>' +
-            '<p class="small muted" style="margin:6px 0 10px 0">Thiên Nghịch Châu, Trúc Cơ Đan, Bách Vạn Hồn Phiên, Cực Cảnh... mở khóa theo cấp độ từ vựng đến HSK 9!</p>' +
-            '<button class="btn-primary btn-block" data-act="openTreasures" style="background:#d97706;border-color:#b45309">🔮 Xem 12 Pháp Bảo Đã Thức Tỉnh</button>' +
-            '</div>' +
-
-            // 2. 5 CÔNG CỤ HANZIGURU XÂY NỀN & NÂNG CAO
-            '<div class="card" style="border:2px solid #0284c7;background:#f0f9ff;border-radius:12px;padding:12px">' +
-            '<h3 style="margin:0 0 6px 0;color:#0369a1"><span class="zh">🛠️</span>5 Tuyệt Kỹ HanziGuru Xây Nền</h3>' +
-            '<p class="small muted" style="margin:0 0 10px 0">Kho dữ liệu kinh điển giúp hiểu sâu bản chất chữ Hán, phát âm chuẩn và khẩu ngữ linh hoạt:</p>' +
-            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
-            '<button class="btn" data-act="openCore100" style="font-size:0.85em;padding:8px 4px;font-weight:700">🧱 100 Chữ Trúc Cơ</button>' +
-            '<button class="btn" data-act="openRadicals214" style="font-size:0.85em;padding:8px 4px;font-weight:700">📜 214 Bộ Thủ Đạo Văn</button>' +
-            '<button class="btn" data-act="openPhoneticFamilies" style="font-size:0.85em;padding:8px 4px;font-weight:700">🗡️ Vạn Kiếm Quy Tông</button>' +
-            '<button class="btn" data-act="openMeasureWords" style="font-size:0.85em;padding:8px 4px;font-weight:700">⚖️ Lượng Từ Trực Quan</button>' +
-            '</div>' +
-            '<button class="btn btn-block" data-act="openPinyinMatrix" style="margin-top:8px;font-weight:700;color:#0284c7">🌐 Đại La Âm Trận (Bảng Ma Trận Pinyin)</button>' +
-            '</div>' +
-
-            // 3. ĐẤU PHÁP GHÉP TỪ
-            '<div class="card" style="border:2px solid #2563eb;background:rgba(37,99,235,0.03);border-radius:12px;padding:12px">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center">' +
-            '<h3 style="margin:0"><span class="zh">合</span>Đấu Pháp Ghép Từ (2–3 chữ)</h3>' +
-            '<span style="background:#2563eb;color:#fff;padding:2px 8px;border-radius:10px;font-size:0.75em;font-weight:700">CHỐNG HỌC VẸT</span>' +
-            '</div>' +
-            '<p class="small muted" style="margin:6px 0 10px 0">Ghép chữ Hán thành từ ghép song âm tiết / tam âm tiết có nghĩa, có Pinyin và phát âm bản xứ.</p>' +
-            '<button class="btn-primary btn-block" data-act="openCompoundGame">🎮 Chơi ghép từ (5 câu)</button>' +
-            '</div>' +
-
-            // 4. ĐỐ NGỮ CẢNH CÂU
-            '<div class="card" style="border:2px solid #16a34a;background:rgba(22,163,74,0.03);border-radius:12px;padding:12px">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center">' +
-            '<h3 style="margin:0"><span class="zh">句</span>Đố Ngữ Cảnh Câu (Cloze Test)</h3>' +
-            '<span style="background:#16a34a;color:#fff;padding:2px 8px;border-radius:10px;font-size:0.75em;font-weight:700">PHẢN XẠ THỰC CHIẾN</span>' +
-            '</div>' +
-            '<p class="small muted" style="margin:6px 0 10px 0">Điền chữ còn thiếu trong câu văn hoàn chỉnh trích từ kho truyện, luyện nghe toàn câu.</p>' +
-            '<button class="btn-primary btn-block" data-act="openClozeGame" style="background:#16a34a;border-color:#15803d">📖 Thử thách câu ngữ cảnh (5 câu)</button>' +
-            '</div>' +
-
-            // 5. CẤU TRÚC CÂU VÀNG
-            '<div class="card" style="border:2px solid #d97706;background:rgba(217,119,6,0.03);border-radius:12px;padding:12px">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center">' +
-            '<h3 style="margin:0"><span class="zh">构</span>Cấu Trúc Câu Vàng (HanziGuru)</h3>' +
-            '<span style="background:#d97706;color:#fff;padding:2px 8px;border-radius:10px;font-size:0.75em;font-weight:700">BẢO BỐI NGỮ PHÁP</span>' +
-            '</div>' +
-            '<p class="small muted" style="margin:6px 0 10px 0">Khung giải phẫu câu tiếng Trung S + T + P + M + V + O và 10 mô thức câu HSK kinh điển.</p>' +
-            '<button class="btn btn-block" data-act="openHanziBlueprint" style="font-weight:700">📘 Xem Cẩm Nang Cấu Trúc Câu</button>' +
-            '</div>' +
-
-            '<div class="row" style="gap:8px;margin-top:4px">' +
-            '<button class="btn" data-act="openPavilion" style="flex:1">🏮 Đối từ Vọng Vân Đình</button>' +
-            '<button class="btn" data-act="openPond" style="flex:1">🎣 Câu cá Hồ sen</button>' +
+            '<div class="card" style="background:linear-gradient(135deg,#fcf8ec,#f5e9cb);border:2px solid #d97706;border-radius:16px;padding:14px;margin-bottom:12px">' +
+            '<div style="font-size:0.75em;color:#92400e;font-weight:800">TÔNG MÔN HIỆN TẠI</div>' +
+            '<h2 style="font-size:1.6em;color:var(--red-2);margin:4px 0">' + esc(curSect.name) + '</h2>' +
+            '<div class="small muted" style="font-size:0.85em;margin-bottom:6px">📍 ' + esc(curSect.loc) + '</div>' +
+            '<p style="font-size:0.88em;line-height:1.5;margin:4px 0">' + esc(curSect.desc) + '</p>' +
+            '<div style="background:rgba(217,119,6,0.1);padding:6px 10px;border-radius:8px;font-size:0.8em;font-weight:700;color:#b45309;margin-top:8px">' +
+            '✨ Đặc Quyền Môn Phái: ' + esc(curSect.bonus) +
             '</div></div>';
+
+        html += '<h3 style="margin:8px 0 6px 0;font-size:1.05em">🏛️ Kiến Trúc Tu Chân</h3>' +
+            '<div style="display:flex;flex-direction:column;gap:8px">' +
+
+            // Tụ Linh Trận
+            '<div class="quest-item">' +
+            '<div style="font-size:2em;margin-right:8px">💎</div>' +
+            '<div style="flex:1;min-width:0">' +
+            '<div style="font-weight:700;font-size:0.95em">Tụ Linh Trận (Thu Hoạch Linh Khí)</div>' +
+            '<div class="small muted" style="font-size:0.8em">Tự động ngưng tụ linh khí theo thời gian thực (Cấp ' + state.sectData.arrayLevel + ')</div>' +
+            '<div style="font-size:0.78em;color:var(--jade);font-weight:700;margin-top:2px">Khả dụng: +' + harvestLk + ' 💎 Linh Khí</div>' +
+            '</div>' +
+            '<button class="btn-primary" data-act="harvestLinhMach" data-amt="' + harvestLk + '" style="font-size:0.8em;padding:6px 12px">Thu Hoạch</button>' +
+            '</div>' +
+
+            // Luyện Đan Lô
+            '<div class="quest-item">' +
+            '<div style="font-size:2em;margin-right:8px">🔥</div>' +
+            '<div style="flex:1;min-width:0">' +
+            '<div style="font-weight:700;font-size:0.95em">Luyện Đan Lô (Nấu Linh Dược)</div>' +
+            '<div class="small muted" style="font-size:0.8em">Tiêu hao 50 💎 luyện 1 Trúc Cơ Đan (tăng +100 Tu vi & hồi máu khi Trảm Yêu)</div>' +
+            '</div>' +
+            '<button class="btn" data-act="craftPill" style="font-size:0.8em;padding:6px 12px;font-weight:700">Luyện Đan</button>' +
+            '</div>' +
+
+            // Tàng Kinh Các
+            '<div class="quest-item">' +
+            '<div style="font-size:2em;margin-right:8px">📚</div>' +
+            '<div style="flex:1;min-width:0">' +
+            '<div style="font-weight:700;font-size:0.95em">Tàng Kinh Các (Thư Viện Đạo Văn)</div>' +
+            '<div class="small muted" style="font-size:0.8em">Tra cứu hơn 2,500 chữ Hán, bộ thủ, bí kíp đã thông suốt</div>' +
+            '</div>' +
+            '<button class="btn" data-act="openLibraryPlace" style="font-size:0.8em;padding:6px 12px;font-weight:700">Tra Cứu</button>' +
+            '</div>' +
+
+            // Hộ Sơn Đại Trận
+            '<div class="quest-item">' +
+            '<div style="font-size:2em;margin-right:8px">🛡️</div>' +
+            '<div style="flex:1;min-width:0">' +
+            '<div style="font-weight:700;font-size:0.95em">Hộ Sơn Đại Trận (Nâng Cấp Trận Pháp)</div>' +
+            '<div class="small muted" style="font-size:0.8em">Cấp ' + state.sectData.arrayLevel + ' · Chi phí: ' + (state.sectData.arrayLevel * 60) + ' 💎</div>' +
+            '</div>' +
+            '<button class="btn" data-act="upgradeSectArray" style="font-size:0.8em;padding:6px 12px;font-weight:700">Nâng Cấp</button>' +
+            '</div>' +
+
+            '</div>';
 
         ui.sheet.innerHTML = html;
         openSheet('tall');
     }
 
+    // =========================================================================
+    // 5. TU VI DASHBOARD
+    // =========================================================================
     function openRealmDashboard() {
         place = 'realm';
         updateBottomNavActive('realm');
@@ -5830,52 +6199,61 @@
         var curExp = (state.exp || 0) - r.minExp;
         var reqExp = r.maxExp - r.minExp;
         var expPct = Math.min(100, Math.round((curExp / (reqExp || 1)) * 100));
+        var stats = Core.calcCombatStats ? Core.calcCombatStats(state) : { cp: 100, hp: 200, atk: 30, def: 10, mind: 10 };
+        var learnedCount = Object.keys(state.items || {}).length;
 
-        var html = '<div class="sheet-title"><span class="zh">修</span><b>Tu Vi & Thành Tựu Tu Học</b>' +
+        var html = '<div class="sheet-title"><span class="zh">修</span><b>Tu Vi & Thuộc Tính Tác Chiến</b>' +
             '<button class="btn-ghost close" data-act="closeSheet">Đóng</button></div>' +
-            '<div class="card" style="text-align:center;padding:18px 14px;background:linear-gradient(135deg,#fcf8ec,#f5e9cb);border:2px solid var(--line);border-radius:16px;margin-bottom:12px">' +
-            '<div style="font-size:3.5em;margin-bottom:6px">' + r.icon + '</div>' +
-            '<div style="font-size:0.85em;font-weight:700;color:var(--ink-2)">HIỆN TẠI ĐẠT ĐẾN</div>' +
+            '<div class="card" style="text-align:center;padding:16px 14px;background:linear-gradient(135deg,#fcf8ec,#f5e9cb);border:2px solid var(--line);border-radius:16px;margin-bottom:12px">' +
+            '<div style="font-size:3.5em;margin-bottom:4px">' + r.icon + '</div>' +
+            '<div style="font-size:0.8em;font-weight:700;color:var(--ink-2)">CẢNH GIỚI HIỆN TẠI (HSK 9)</div>' +
             '<h2 style="font-size:1.6em;color:var(--red-2);margin:4px 0">' + esc(r.name) + '</h2>' +
             '<div style="display:inline-block;background:var(--red-2);color:#fff;font-weight:700;padding:2px 10px;border-radius:10px;font-size:0.8em;margin-bottom:8px">Cấp ' + r.level + ' · ' + esc(r.title) + '</div>' +
             '<p class="small muted" style="margin:4px auto;max-width:380px">' + esc(r.desc) + '</p>' +
-            '<div style="margin-top:12px;padding:0 8px">' +
-            '<div style="display:flex;justify-content:space-between;font-size:0.8em;font-weight:700;margin-bottom:3px">' +
-            '<span>EXP Cấp Hiện Tại: ' + curExp + ' / ' + reqExp + '</span>' +
-            '<span>' + expPct + '%</span></div>' +
-            '<div style="height:10px;background:rgba(0,0,0,0.1);border-radius:5px;overflow:hidden;border:1px solid var(--line)">' +
+            '<div style="margin-top:10px;padding:0 6px">' +
+            '<div style="display:flex;justify-content:space-between;font-size:0.75em;font-weight:700;margin-bottom:3px">' +
+            '<span>Tiến Độ Chữ Hán: ' + learnedCount + ' / 11,092 Từ (HSK 9)</span>' +
+            '<span>' + expPct + '% EXP</span></div>' +
+            '<div style="height:9px;background:rgba(0,0,0,0.1);border-radius:5px;overflow:hidden;border:1px solid var(--line)">' +
             '<div style="height:100%;width:' + expPct + '%;background:linear-gradient(90deg,#d97706,#16a34a);border-radius:4px"></div>' +
             '</div></div></div>';
 
-        html += '<h3 style="margin:12px 0 6px 0;font-size:1.05em">🏆 Mốc Thành Tựu & Cột Mốc Tu Học</h3>' +
-            '<div style="display:flex;flex-direction:column;gap:8px">';
+        // Bảng thuộc tính chiến đấu
+        html += '<div class="card" style="background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px">' +
+            '<h3 style="margin:0 0 8px 0;font-size:1em;color:var(--ink)">⚔️ Thuộc Tính Tác Chiến Trảm Yêu</h3>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+            '<div class="hunt-card" style="margin:0;padding:8px">' +
+            '<div><b>Lực Chiến:</b> <span style="color:#d97706;font-weight:800">' + stats.cp + '</span></div>' +
+            '</div>' +
+            '<div class="hunt-card" style="margin:0;padding:8px">' +
+            '<div><b>Công Kích:</b> <span style="color:#2563eb;font-weight:800">' + stats.atk + '</span></div>' +
+            '</div>' +
+            '<div class="hunt-card" style="margin:0;padding:8px">' +
+            '<div><b>Khí Huyết:</b> <span style="color:#16a34a;font-weight:800">' + stats.hp + '</span></div>' +
+            '</div>' +
+            '<div class="hunt-card" style="margin:0;padding:8px">' +
+            '<div><b>Thần Thức:</b> <span style="color:#9333ea;font-weight:800">' + stats.mind + '</span></div>' +
+            '</div>' +
+            '</div></div>';
 
-        for (var i = 0; i < ACHIEVEMENTS.length; i++) {
-            var ach = ACHIEVEMENTS[i];
-            var p = Math.min(ach.target, ach.progress(state));
-            var rec = (state.achievements && state.achievements[ach.id]) || { unlocked: false, claimed: false };
-            var isUnlocked = p >= ach.target || rec.unlocked;
-            var isClaimed = rec.claimed;
-            var pctVal = Math.min(100, Math.round((p / ach.target) * 100));
+        // Nút mở kho báu pháp bảo
+        html += '<button class="btn btn-block" data-act="openTreasures" style="padding:10px;font-weight:700;margin-bottom:12px;color:#b45309">🔮 Xem 12 Pháp Bảo Tiên Nghịch Thức Tỉnh</button>';
 
-            html += '<div class="quest-item' + (isClaimed ? ' done' : '') + '">' +
-                '<div style="font-size:1.8em;margin-right:8px">' + ach.icon + '</div>' +
-                '<div style="flex:1;min-width:0">' +
-                '<div style="font-weight:700;font-size:0.95em">' + esc(ach.title) + '</div>' +
-                '<div class="small muted" style="font-size:0.8em">' + esc(ach.desc) + '</div>' +
-                '<div style="display:flex;align-items:center;gap:8px;margin-top:4px">' +
-                '<div style="flex:1;height:6px;background:rgba(0,0,0,0.08);border-radius:3px;overflow:hidden">' +
-                '<div style="height:100%;width:' + pctVal + '%;background:' + (isUnlocked ? '#16a34a' : '#d97706') + '"></div>' +
-                '</div>' +
-                '<span style="font-size:0.75em;font-weight:700;color:var(--ink-2)">' + p + ' / ' + ach.target + '</span>' +
-                '</div></div>' +
-                '<div>' +
-                (isClaimed ? '<span style="font-size:0.8em;color:var(--jade);font-weight:700">✓ Đã nhận</span>'
-                    : (isUnlocked ? '<button class="btn-primary" data-act="claimAchievement" data-id="' + esc(ach.id) + '" style="font-size:0.8em;padding:5px 10px;background:#16a34a;border-color:#15803d">Nhận (+' + ach.lk + ' 灵)</button>'
-                        : '<span style="font-size:0.8em;color:var(--ink-3)">' + pctVal + '%</span>')) +
-                '</div></div>';
-        }
-        html += '</div>';
+        // Thống kê tu học
+        html += '<h3 style="margin:8px 0 6px 0;font-size:1.05em">📊 Thống Kê Tu Học Chi Tiết</h3>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">' +
+            '<div class="card" style="margin:0;padding:10px;text-align:center">' +
+            '<div style="font-size:1.5em;font-weight:800;color:var(--red-2)">' + learnedCount + '</div>' +
+            '<div class="small muted">Chữ đã thuộc</div>' +
+            '</div>' +
+            '<div class="card" style="margin:0;padding:10px;text-align:center">' +
+            '<div style="font-size:1.5em;font-weight:800;color:#2563eb">' + (state.streak && state.streak.days || 1) + '</div>' +
+            '<div class="small muted">Chuỗi ngày tu luyện</div>' +
+            '</div>' +
+            '</div>';
+
+        // Nút nhập truyện .txt
+        html += '<button class="btn-primary btn-block" data-act="manageBook" style="padding:10px;font-size:0.95em">📄 Quản Lý & Nhập File Truyện (.txt)</button>';
 
         ui.sheet.innerHTML = html;
         openSheet('tall');
@@ -6277,6 +6655,11 @@
 
     // Xử lý nút Back của Android (chống thoát nhầm khi vuốt back)
     function handleBack() {
+        if (combatState && combatState.active) {
+            combatState.active = false;
+            openHuntDashboard();
+            return true;
+        }
         if (fastQuiz && fastQuiz.active) {
             if (fastQuiz.timer) clearInterval(fastQuiz.timer);
             fastQuiz.active = false;
@@ -6457,6 +6840,76 @@
         case 'dlgRuby': dialog.ruby = !dialog.ruby; renderDialog(); break;
         case 'readSkip': readSkip(); break;
         case 'openQuests': openQuestDashboard(); break;
+
+        case 'setQuestTab': {
+            questTab = el.getAttribute('data-tab') || 'chinh_tuyen';
+            openQuestDashboard();
+            break;
+        }
+        case 'claimMainQuest': {
+            var mqId = el.getAttribute('data-id');
+            var mq = null;
+            for (var mqI = 0; mqI < TIEN_NGHICH_MAIN_QUESTS.length; mqI++) {
+                if (TIEN_NGHICH_MAIN_QUESTS[mqI].id === mqId) { mq = TIEN_NGHICH_MAIN_QUESTS[mqI]; break; }
+            }
+            if (mq && !state.claimedMainQuests[mqId]) {
+                state.claimedMainQuests[mqId] = true;
+                state.lk += mq.lk;
+                addExp(mq.exp, 'Chính tuyến: ' + mq.title);
+                sfx('bell');
+                toast('🎉 Hoàn thành ' + mq.title + '! +' + mq.lk + ' 💎, +' + mq.exp + ' ✨', 4000);
+                openQuestDashboard();
+            }
+            break;
+        }
+        case 'finishPrologue': {
+            state.flags.tienNghichPrologue = true;
+            closeSheet();
+            save();
+            toast('Tư Đồ Nam: Hãy bắt đầu tu luyện cuộn chữ Hán đầu tiên!', 4000);
+            break;
+        }
+        case 'openHunt': openHuntDashboard(); break;
+        case 'startCombat': startCombat(el.getAttribute('data-id'), false); break;
+        case 'startBossCombat': startCombat(el.getAttribute('data-id'), true); break;
+        case 'answerCombat': answerCombat(el.getAttribute('data-ch')); break;
+        case 'fleeCombat': combatState.active = false; openHuntDashboard(); break;
+        case 'harvestLinhMach': {
+            var amt = Number(el.getAttribute('data-amt')) || 10;
+            state.lk += amt;
+            state.sectData.lastHarvest = Date.now();
+            sfx('bell');
+            toast('💎 Thu hoạch thành công +' + amt + ' Linh Khí từ Tụ Linh Trận!', 3000);
+            openSectDashboard();
+            break;
+        }
+        case 'craftPill': {
+            if (state.lk < 50) {
+                toast('Không đủ linh khí! Cần 50 💎 để luyện Trúc Cơ Đan.');
+            } else {
+                state.lk -= 50;
+                addExp(100, 'Luyện Trúc Cơ Đan');
+                sfx('perfect');
+                toast('🔥 Luyện thành 1 Trúc Cơ Đan (+100 ✨ Tu vi)!', 3500);
+                openSectDashboard();
+            }
+            break;
+        }
+        case 'upgradeSectArray': {
+            var cost = (state.sectData.arrayLevel || 1) * 60;
+            if (state.lk < cost) {
+                toast('Không đủ linh khí! Cần ' + cost + ' 💎 để nâng cấp Hộ Sơn Đại Trận.');
+            } else {
+                state.lk -= cost;
+                state.sectData.arrayLevel = (state.sectData.arrayLevel || 1) + 1;
+                sfx('bell');
+                toast('🛡️ Hộ Sơn Đại Trận thăng lên Cấp ' + state.sectData.arrayLevel + '!', 4000);
+                openSectDashboard();
+            }
+            break;
+        }
+        case 'openLibraryPlace': closeSheet(); openPlace('library'); break;
+
         case 'claimDailyChest': claimDailyChest();
             break;
         case 'openRealmModal': openRealmDashboard(); break;
@@ -6703,9 +7156,9 @@
                 sfx('tap');
                 updateBottomNavActive(nav);
                 if (nav === 'quests') openQuestDashboard();
-                else if (nav === 'study') openPlace('study');
-                else if (nav === 'practice') openPracticeHub();
-                else if (nav === 'world') { closeSheet(); }
+                else if (nav === 'hunt') openHuntDashboard();
+                else if (nav === 'study') openStudyDashboard();
+                else if (nav === 'sect') openSectDashboard();
                 else if (nav === 'realm') openRealmDashboard();
             });
         }
@@ -6959,7 +7412,10 @@
         applyUrlLinks();
         scheduleStroll();
         setTimeout(function () {
-            if (!dialog && !quiz && !fishing && !place && !riddle && !paper && !card && ui.sheet.hidden) {
+            updateQuestBadge();
+            if (!state.flags.tienNghichPrologue) {
+                showPrologueModal();
+            } else if (!dialog && !quiz && !fishing && !place && !riddle && !paper && !card && ui.sheet.hidden) {
                 openQuestDashboard();
             }
         }, 500);

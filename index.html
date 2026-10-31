@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Hằng Nhạc Phái · Tiên Nghịch — Tu Chân Học Tiếng Trung (HSK 9)</title>
+<title>Tu Tiên Nghịch Thiên — Tu Tiên Học Tiếng Trung (HSK 9)</title>
 <meta name="description" content="Quy Vân Quán: quán trà cho yêu quái trên núi mây. Học đọc chữ Hán qua âm Hán Việt, câu cá, tiếp khách, sửa lại đạo quán cũ.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://vietphrase.app/quy-van/">
@@ -868,6 +868,53 @@ button:disabled { cursor: default; opacity: 0.5; }
         animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important;
     }
 }
+
+/* CSS Bổ Sung Cho Tu Tiên Nghịch Thiên */
+.bottom-nav-item { position: relative; }
+.nav-badge {
+    position: absolute; top: 2px; right: calc(50% - 18px);
+    background: #dc2626; color: #fff; font-size: 10px; font-weight: 800;
+    min-width: 16px; height: 16px; line-height: 16px; border-radius: 8px;
+    padding: 0 4px; text-align: center; border: 1.5px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3); pointer-events: none;
+}
+.tab-bar {
+    display: flex; gap: 6px; margin-bottom: 12px; background: rgba(0,0,0,0.04);
+    padding: 4px; border-radius: 12px; border: 1px solid var(--line);
+}
+.tab-btn {
+    flex: 1; padding: 8px 4px; border: none; background: transparent;
+    border-radius: 8px; font-weight: 700; font-size: 0.9em; cursor: pointer;
+    color: var(--ink-2); font-family: var(--font-ui); transition: all 0.15s ease;
+}
+.tab-btn.active {
+    background: var(--paper); color: var(--red-2);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.hunt-card {
+    display: flex; align-items: center; gap: 12px; padding: 12px;
+    background: #fff; border: 1.5px solid var(--line); border-radius: 14px;
+    margin-bottom: 10px; transition: transform 0.1s ease;
+}
+.hunt-card:active { transform: scale(0.98); }
+.mob-avatar {
+    width: 56px; height: 56px; border-radius: 12px; background: #f8fafc;
+    border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; flex: none;
+}
+.mob-avatar img { width: 44px; height: 44px; object-fit: contain; }
+.stat-pill {
+    display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px;
+    border-radius: 6px; font-size: 0.78em; font-weight: 700; background: #f1f5f9;
+}
+.hp-bar-wrap {
+    height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 4px;
+}
+.hp-bar-fill {
+    height: 100%; background: linear-gradient(90deg, #dc2626, #16a34a); border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
 </style>
 </head>
 <body>
@@ -878,15 +925,15 @@ button:disabled { cursor: default; opacity: 0.5; }
 
     <header class="hud">
         <div class="brand" id="brandRealm" data-act="openRealmModal" role="button" tabindex="0" title="Cảnh giới tu vi" style="cursor:pointer">
-            <span class="brand-zh">恒岳派</span><span class="realm-badge" id="realmBadge">Ngưng Khí</span>
+            <span class="brand-zh" style="font-size:1.1em;font-weight:900;letter-spacing:0.5px">⚡ Tu Tiên</span><span class="realm-badge" id="realmBadge">Ngưng Khí</span>
         </div>
-        <span class="stat" id="statLk" title="Linh khí: có khi đọc đúng chữ, dùng để sửa quán"><span class="zh-ico">灵</span><b>0</b></span>
-        <span class="stat" id="statCover" title="Phần chữ Hán trong truyện mà bạn đã học"><span class="zh-ico">读</span><b>0%</b></span>
-        <span class="stat" id="statExp" title="Điểm Tu Vi (EXP)"><span class="zh-ico">修</span><b id="expVal">0</b></span>
+        <span class="stat" id="statLk" title="Linh khí: Dùng tu luyện, luyện đan và nâng cấp tông môn"><span class="zh-ico">💎</span><b>0</b></span>
+        <span class="stat" id="statCover" title="Độ phủ từ vựng trong truyện .txt đã học"><span class="zh-ico">📖</span><b>0%</b></span>
+        <span class="stat" id="statExp" title="Điểm Tu Vi (EXP)"><span class="zh-ico">✨</span><b id="expVal">0</b></span>
         <span class="grow"></span>
-        <button class="chip" id="btnUploadTxt" type="button" data-act="manageBook" title="Quản lý và học chữ từ tệp văn bản .txt" style="font-weight:600;margin-right:6px">📄 Quản lý file .txt</button>
+        <button class="chip" id="btnUploadTxt" type="button" data-act="manageBook" title="Tải truyện và quản lý file .txt" style="font-weight:600;margin-right:6px">📄 Nhập Truyện (.txt)</button>
         <button class="icon-btn" id="btnSound" type="button" aria-label="Tắt âm thanh">🔊</button>
-        <button class="icon-btn zh" id="btnBook" type="button" aria-label="Sổ ghi chép" title="Sổ ghi chép">簿</button>
+        <button class="icon-btn" id="btnBook" type="button" aria-label="Sổ tay ghi chép" title="Sổ tay ghi chép" style="font-weight:700">📜</button>
     </header>
 
     <button class="hint" id="hint" type="button" hidden>
@@ -929,21 +976,22 @@ button:disabled { cursor: default; opacity: 0.5; }
         <button class="bottom-nav-item active" type="button" data-nav="quests">
             <span class="icon">📜</span>
             <span class="label">Nhiệm Vụ</span>
+            <span class="nav-badge" id="badgeQuests" hidden>0</span>
+        </button>
+        <button class="bottom-nav-item" type="button" data-nav="hunt">
+            <span class="icon">⚔️</span>
+            <span class="label">Trảm Yêu</span>
         </button>
         <button class="bottom-nav-item" type="button" data-nav="study">
-            <span class="icon">📖</span>
-            <span class="label">Thư Trai</span>
+            <span class="icon">🧘</span>
+            <span class="label">Tu Luyện</span>
         </button>
-        <button class="bottom-nav-item" type="button" data-nav="practice">
-            <span class="icon">🎮</span>
-            <span class="label">Luyện Tập</span>
-        </button>
-        <button class="bottom-nav-item" type="button" data-nav="world">
-            <span class="icon">🏮</span>
-            <span class="label">Đạo Quán</span>
+        <button class="bottom-nav-item" type="button" data-nav="sect">
+            <span class="icon">🏯</span>
+            <span class="label">Tông Môn</span>
         </button>
         <button class="bottom-nav-item" type="button" data-nav="realm">
-            <span class="icon">🏆</span>
+            <span class="icon">👑</span>
             <span class="label">Tu Vi</span>
         </button>
     </nav>

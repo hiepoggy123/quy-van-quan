@@ -1,7 +1,7 @@
 {
-  "name": "Quy Vân Quán — Học Tiếng Trung",
-  "short_name": "Quy Vân Quán",
-  "description": "Game học chữ Hán qua Pinyin và Nghĩa tiếng Việt. Hỗ trợ học theo văn bản .txt tải lên và Spaced Repetition (SRS).",
+  "name": "Tu Tiên Nghịch Thiên — Học Tiếng Trung",
+  "short_name": "Tu Tiên",
+  "description": "Game tu tiên học chữ Hán theo tiểu thuyết Tiên Nghịch. Hỗ trợ học theo văn bản .txt tải lên, 5 công cụ HanziGuru và Spaced Repetition (SRS).",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
