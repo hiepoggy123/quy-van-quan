@@ -63,6 +63,8 @@
             sprite: { human: 'girl-fawn', 'true': 'fawn' } },
         'xiaoqian': { name: 'Nhiếp Tiểu Thiến', zh: '聂小倩', title: 'Cô gái bên song cửa lúc canh ba', night: true,
             sprite: { human: 'lady-qian', 'true': 'lady-qian-ghost' } },
+        'spring': { name: 'Tiểu Xuân', zh: '小春', title: 'Cô gái hoa cười bên rặng trúc', night: true,
+            sprite: { human: 'girl-fawn', 'true': 'girl-fawn' } },
         // cameo: chỉ nói trong truyện đó (tale.cast), có chân dung, không có sprite và không có truyện riêng.
         // Trên bản đồ, Giáng Tuyết là cây trà hoa đỏ ở góc Vườn rau.
         'jiangxue': { name: 'Giáng Tuyết', zh: '绛雪', title: 'Cô gái áo đỏ thẫm, ít lời', cameo: 'xiangyu' },
@@ -1060,6 +1062,38 @@
             ],
             then: { flag: 'xiaoqian-2', tale: 'xiaoqian', keepsake: 'dang', learn: ['非', '杨', '久', '送', '块', '告', '骨', '守', '答', '灯'], lk: 10 }
         },
+        {
+            id: 'spring-1', where: 'garden', tale: 'spring', guest: 'spring',
+            steps: [
+                { say: 'note', vi: 'Đêm trăng thanh gió mát, trong vườn thuốc có tiếng cười khúc khích như chuông ngân.' },
+                { say: 'spring', zh: '你好！我是小春。', vi: 'Chào bạn! Ta là Tiểu Xuân.' },
+                { say: 'spring', zh: '我看你在山里学字，好认真呀。', vi: 'Ta thấy bạn học chữ trên núi chăm chỉ quá đi thôi.' },
+                {
+                    choose: [
+                        { zh: '学字很有趣。', vi: 'Học chữ rất thú vị.', ok: true,
+                            reply: { zh: '是吧！字就像春天开出的花一样。', vi: 'Đúng vậy! Chữ Hán cũng giống như hoa nở mùa xuân vậy.' } },
+                        { zh: '字太多了，有点难记。', vi: 'Chữ nhiều quá, hơi khó nhớ.', ok: true,
+                            reply: { zh: '哈哈，不要只记一个字，要连起来学呀！', vi: 'Ha ha, đừng chỉ nhớ một chữ đơn độc, phải học liền cụm từ chứ!' } }
+                    ]
+                },
+                { say: 'spring', zh: '一个字是一个音，两个字连起来，才有真正的意思。', vi: 'Một chữ chỉ là một âm, hai chữ ghép liền lại mới thành ý nghĩa thực sự.' },
+                { read: { line: '春风吹绿水', vi: 'Gió xuân thổi nước biếc.' }, ask: 'Cùng Tiểu Xuân ngâm câu thơ xuân về làn nước biếc.' },
+                { say: 'spring', zh: '读得真好！明天晚上，我再来找你玩。', vi: 'Đọc hay lắm! Đêm mai ta lại đến chơi với bạn nhé.' }
+            ],
+            then: { flag: 'spring-1', lk: 5 }
+        },
+        {
+            id: 'spring-2', where: 'garden', tale: 'spring', guest: 'spring',
+            steps: [
+                { say: 'note', vi: 'Tiểu Xuân lại đến, trên tay ôm một cành hoa mai trắng ngào ngạt hương thơm.' },
+                { say: 'spring', zh: '今晚我们接着念后半句，好吗？', vi: 'Tối nay chúng ta ngâm tiếp nửa câu sau nhé?' },
+                { read: { line: '白花满青山', vi: 'Hoa trắng ngợp núi xanh.' }, ask: 'Ngâm câu thơ đối về hoa nở trên sườn núi.' },
+                { say: 'spring', zh: '春风吹绿水，白花满青山。多美啊！', vi: 'Gió xuân thổi nước biếc, hoa trắng ngợp núi xanh. Đẹp biết bao!' },
+                { say: 'spring', zh: '这朵花送给你。多笑一笑，学字就不累了。', vi: 'Cành hoa này tặng bạn. Cười nhiều một chút, học chữ sẽ chẳng còn mệt mỏi nữa.' },
+                { say: 'note', yi: true, zh: '笑者，心自春。', vi: 'Người hay cười, lòng tựa mùa xuân.' }
+            ],
+            then: { tale: 'spring', keepsake: 'hoa-xuan', lk: 15 }
+        },
         // Đợt E (giữa game): chương 2 của khách quen, ban ngày ở Quán trà, mở theo độ phủ đọc 43/53/63 %.
         {
             id: 'nguyet-4', where: 'tea', guest: 'ho-nguyet', when: { flag: 'nguyet-3', cover: 0.43 },
@@ -1867,6 +1901,14 @@
             keepsake: 'dang', when: { night: true, repair: 'den', cover: 0.7 },
             scenes: ['xiaoqian-1', 'xiaoqian-2'],
             yi: { zh: '心正不怕鬼。', vi: 'Lòng ngay thì chẳng sợ ma.' }
+        },
+        {
+            id: 'spring', guest: 'spring', zh: '小春', name: 'Tiểu Xuân', tone: 'vui', place: 'garden',
+            sprite: { human: 'girl-fawn', 'true': 'girl-fawn' },
+            chars: ['春', '风', '吹', '花', '草', '笑', '心', '乐', '生', '美'],
+            keepsake: 'hoa-xuan', when: { night: true, repair: 'den', cover: 0.15 },
+            scenes: ['spring-1', 'spring-2'],
+            yi: { zh: '笑者，心自春。', vi: 'Người hay cười, lòng tựa mùa xuân.' }
         }
     ],
 
@@ -1882,7 +1924,8 @@
         sach: { zh: '书', name: 'Cuốn sách của Nhan Như Ngọc', vi: 'Cuốn sách cô gái giấy để lại ở Tàng Kinh Các. Đọc xong thì gặp lại.', tale: 'yan' },
         trang: { zh: '月', name: 'Trăng giấy Lao Sơn', vi: 'Mặt trăng giấy lão đạo sĩ dán trên cột cổng Sơn môn. Đêm nào cũng sáng.', tale: 'laoshan' },
         thuoc: { zh: '药', name: 'Gói thảo dược', vi: 'Gói thuốc Hoa Cô Tử treo ở cửa bếp. Quán có thêm trà thảo dược.', tale: 'huagu' },
-        dang: { zh: '灯', name: 'Ngọn đèn Thư trai', vi: 'Tiểu Thiến giữ giúp ngọn đèn Thư trai. Đêm nào đèn cũng sáng ấm.', tale: 'xiaoqian' }
+        dang: { zh: '灯', name: 'Ngọn đèn Thư trai', vi: 'Tiểu Thiến giữ giúp ngọn đèn Thư trai. Đêm nào đèn cũng sáng ấm.', tale: 'xiaoqian' },
+        'hoa-xuan': { zh: '春', name: 'Xuân Tiếu Hoa', vi: 'Cành hoa xuân ngào ngạt của Tiểu Xuân. Nhắc bạn luôn vui vẻ khi học.', tale: 'spring' }
     },
 
     // Khách cũ ghé lại một đêm sau khi truyện của họ đã xong (đợt E): { id, guest, place, tone, form, chars, when,

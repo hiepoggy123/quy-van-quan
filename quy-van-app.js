@@ -1600,6 +1600,17 @@
                         '<button class="btn" data-act="lesson">Vẫn mở cuộn</button></div>'
                     : '<button class="btn-primary btn-block" data-act="lesson">Mở cuộn</button>') + '</div>';
         }
+        html += '<div class="card" style="border: 2px solid #2563eb; background: rgba(37,99,235,0.03); border-radius: 10px; margin: 12px 0;">' +
+            '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+            '<h2 style="margin:0;"><span class="zh">合</span>Luyện Ghép Từ & Ngữ Cảnh</h2>' +
+            '<span style="background:#2563eb; color:#fff; padding:2px 8px; border-radius:10px; font-size:0.75em; font-weight:700;">CHỐNG HỌC VẸT</span>' +
+            '</div>' +
+            '<p class="small muted" style="margin:8px 0;">Học từ ghép 2–3 chữ và giải các câu đố điền khuyết (Cloze Test) từ ngữ cảnh truyện thực tế.</p>' +
+            '<div class="row" style="gap:8px; flex-wrap:wrap;">' +
+            '<button class="btn btn-primary" data-act="openCompoundGame">🎮 Chơi ghép từ (5 câu)</button>' +
+            '<button class="btn" data-act="openClozeGame">📖 Đố ngữ cảnh câu</button>' +
+            '</div></div>';
+
         html += bookCardHtml();
         var due = Core.dueList(state, now());
         html += '<div class="card"><h2><span class="zh">温</span>Ôn bài</h2>';
@@ -2260,6 +2271,87 @@
             '</b> (' + how + ').' +
             (fam.length ? ' Cùng phần ' + zh(x.p) + ': ' + fam.map(function (c) { return zh(c) + ' ' + esc(DECK.byChar[c].hv); }).join(', ') + '.' : '') +
             ' <a class="src" href="phonetic-LGPL.txt" target="_blank" rel="noopener">Nguồn: Make Me a Hanzi</a></div>';
+    }
+
+    var RADICAL_MAP = {
+        '氵': { n: 'Thủy', m: 'nước, sông biển, chất lỏng' },
+        '水': { n: 'Thủy', m: 'nước, dòng nước' },
+        '亻': { n: 'Nhân', m: 'người, hoạt động con người' },
+        '人': { n: 'Nhân', m: 'người' },
+        '艹': { n: 'Thảo', m: 'cây cỏ, hoa lá, thảo mộc' },
+        '木': { n: 'Mộc', m: 'cây cối, gỗ rừng' },
+        '忄': { n: 'Tâm', m: 'cảm xúc, tâm trạng, tim' },
+        '心': { n: 'Tâm', m: 'trái tim, lòng dạ, suy nghĩ' },
+        '口': { n: 'Khẩu', m: 'miệng, ăn uống, lời nói' },
+        '扌': { n: 'Thủ', m: 'bàn tay, động tác cầm nắm' },
+        '手': { n: 'Thủ', m: 'bàn tay' },
+        '女': { n: 'Nữ', m: 'phụ nữ, mẹ, cô gái' },
+        '日': { n: 'Nhật', m: 'mặt trời, ngày, thời gian' },
+        '月': { n: 'Nguyệt', m: 'mặt trăng; thịt, cơ thể' },
+        '土': { n: 'Thổ', m: 'đất đai, mặt đất' },
+        '火': { n: 'Hỏa', m: 'ngọn lửa, nhiệt độ, nấu nướng' },
+        '灬': { n: 'Hỏa', m: 'lửa đun nấu ở dưới' },
+        '目': { n: 'Mục', m: 'con mắt, ánh nhìn' },
+        '石': { n: 'Thạch', m: 'hòn đá, nham thạch' },
+        '钅': { n: 'Kim', m: 'kim loại, tiền bạc' },
+        '金': { n: 'Kim', m: 'vàng, kim loại' },
+        '纟': { n: 'Mịch', m: 'sợi tơ, may vá, liên kết' },
+        '讠': { n: 'Ngôn', m: 'lời nói, ngôn từ' },
+        '言': { n: 'Ngôn', m: 'lời nói, ngôn ngữ' },
+        '门': { n: 'Môn', m: 'cánh cổng, nhà cửa' },
+        '辶': { n: 'Sước', m: 'bước đi, di chuyển, đường sá' },
+        '阝': { n: 'Ấp/Phụ', m: 'vùng đất, gò núi' },
+        '宀': { n: 'Miên', m: 'mái nhà, gia đình' },
+        '犭': { n: 'Khuyển', m: 'thú bốn chân, muông thú' },
+        '鸟': { n: 'Điểu', m: 'loài chim' },
+        '鱼': { n: 'Ngư', m: 'loài cá, sông nước' },
+        '山': { n: 'Sơn', m: 'ngọn núi, vùng núi' },
+        '雨': { n: 'Vũ', m: 'mưa, mây gió trên trời' },
+        '力': { n: 'Lực', m: 'sức mạnh, tác động lực' },
+        '饣': { n: 'Thực', m: 'thức ăn, ẩm thực' },
+        '竹': { n: 'Trúc', m: 'cây tre, bút viết' },
+        '⺮': { n: 'Trúc', m: 'ống tre, vật liệu tre' },
+        '走': { n: 'Tẩu', m: 'chạy, đi bộ' },
+        '足': { n: 'Túc', m: 'bàn chân, bước chân' },
+        '衤': { n: 'Y', m: 'quần áo, trang phục' },
+        '刀': { n: 'Đao', m: 'dao, kiếm, cắt bổ' },
+        '刂': { n: 'Đao', m: 'dao kiếm bén nhọn' },
+        '广': { n: 'Quảng', m: 'mái hiên rộng, dinh thự' },
+        '禾': { n: 'Hòa', m: 'cây lúa, nông nghiệp' },
+        '白': { n: 'Bạch', m: 'màu trắng, sáng tỏ' },
+        '风': { n: 'Phong', m: 'ngọn gió' }
+    };
+
+    function radicalFactHtml(ch, e) {
+        var foundRad = null;
+        for (var r in RADICAL_MAP) {
+            if (e.note && (e.note.indexOf('(' + r + ')') >= 0 || e.note.indexOf(' ' + r + ' ') >= 0 || e.note.indexOf('Bộ ' + RADICAL_MAP[r].n) >= 0 || ch.indexOf(r) >= 0)) {
+                foundRad = { rad: r, info: RADICAL_MAP[r] };
+                break;
+            }
+        }
+        if (!foundRad) return '';
+        return '<div class="fact" style="background:rgba(16,185,129,0.06);border-left:3px solid #059669;padding:6px 10px;border-radius:4px">' +
+            '<b>⛩️ Bộ thủ:</b> <span class="zh" style="font-size:1.2em;font-weight:bold">' + esc(foundRad.rad) + '</span> ' +
+            '<b>Bộ ' + esc(foundRad.info.n) + '</b> (' + esc(foundRad.info.m) + ')</div>';
+    }
+
+    function compoundWordsHtml(e) {
+        if (!e.ex || !e.ex.length) return '';
+        var items = e.ex.map(function (x) {
+            var py = Array.from(x.w).map(function (c) {
+                return DECK.byChar[c] ? DECK.byChar[c].py : '';
+            }).filter(Boolean).join(' ');
+            return '<div style="display:inline-flex;align-items:center;background:rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.08);border-radius:6px;padding:3px 8px;margin:3px 4px;font-size:0.95em">' +
+                '<b class="zh" style="font-size:1.15em;margin-right:6px">' + esc(x.w) + '</b>' +
+                '<button class="chip" data-act="speak" data-text="' + esc(x.w) + '" style="padding:1px 5px;font-size:0.7em;margin-right:6px" title="Nghe cụm từ">🔈</button>' +
+                '<span style="color:var(--accent,#b8402c);font-weight:600;margin-right:4px">' + esc(py) + '</span>' +
+                '<span class="muted small">(' + esc(x.r) + ')</span>' +
+                '</div>';
+        }).join('');
+        return '<div class="fact" style="background:rgba(37,99,235,0.04);border-left:3px solid #2563eb;padding:8px 10px;border-radius:4px">' +
+            '<div style="font-weight:700;color:#1d4ed8;margin-bottom:6px">🧩 Cụm từ ghép thông dụng (2–3 chữ):</div>' +
+            '<div style="display:flex;flex-wrap:wrap">' + items + '</div></div>';
     }
 
     // Các mục dưới chữ: từ Hán Việt đã biết, gợi âm, câu ví dụ, mẹo nhớ, dễ nhầm, tần suất trong truyện.
@@ -5092,6 +5184,200 @@
 
     // ---------- sự kiện ----------
 
+
+    // ==========================================
+    // MINI-GAME: GHÉP TỪ (COMPOUND) & NGỮ CẢNH (CLOZE)
+    // ==========================================
+    var compoundGame = null;
+    var clozeGame = null;
+
+    function openCompoundGame() {
+        var words = [];
+        var learnedChars = Object.keys(state.items || {});
+        if (!learnedChars.length) learnedChars = DECK.list.slice(0, 15).map(function(e) { return e.ch; });
+        
+        learnedChars.forEach(function(ch) {
+            var e = DECK.byChar[ch];
+            if (e && e.ex) {
+                e.ex.forEach(function(x) {
+                    if (x.w && x.w.length >= 2 && x.w.length <= 3) {
+                        words.push({ w: x.w, r: x.r, ch: ch });
+                    }
+                });
+            }
+        });
+        if (!words.length) {
+            toast('Chưa có đủ từ vựng để chơi ghép từ.');
+            return;
+        }
+        words = shuffle(words).slice(0, 5);
+        compoundGame = {
+            questions: words.map(function(item) {
+                var w = item.w;
+                var blankIdx = w.indexOf(item.ch);
+                if (blankIdx < 0) blankIdx = w.length - 1;
+                var targetCh = w.charAt(blankIdx);
+                var promptW = w.slice(0, blankIdx) + '[ ? ]' + w.slice(blankIdx + 1);
+                var py = Array.from(w).map(function(c) { return DECK.byChar[c] ? DECK.byChar[c].py : ''; }).filter(Boolean).join(' ');
+                
+                var distractors = [];
+                while (distractors.length < 3) {
+                    var randEntry = DECK.list[Math.floor(Math.random() * Math.min(100, DECK.list.length))];
+                    if (randEntry.ch !== targetCh && distractors.indexOf(randEntry.ch) < 0) {
+                        distractors.push(randEntry.ch);
+                    }
+                }
+                var options = shuffle([targetCh].concat(distractors));
+                return { w: w, promptW: promptW, targetCh: targetCh, r: item.r, py: py, options: options, chosen: null, ok: false };
+            }),
+            idx: 0,
+            score: 0
+        };
+        renderCompoundGameModal();
+    }
+
+    function renderCompoundGameModal() {
+        var g = compoundGame;
+        if (!g) return;
+        if (g.idx >= g.questions.length) {
+            var winHtml = '<div class="lesson-top"><b>🎮 Kết quả ghép từ</b>' +
+                '<button class="btn-ghost" data-act="closeSheet" style="margin-left:auto">Đóng</button></div>' +
+                '<div class="card" style="text-align:center;padding:24px 14px">' +
+                '<div style="font-size:3em;margin-bottom:8px">🎉</div>' +
+                '<h3>Hoàn thành 5 câu ghép từ!</h3>' +
+                '<p style="font-size:1.15em">Đúng: <b>' + g.score + ' / ' + g.questions.length + '</b> câu</p>' +
+                '<p class="small muted">Bạn đã nắm được các cụm từ quan trọng nhất của các chữ đã học.</p>' +
+                '<div class="row" style="justify-content:center;gap:10px;margin-top:16px">' +
+                '<button class="btn-primary" data-act="openCompoundGame">Chơi lại 5 câu mới</button>' +
+                '<button class="btn" data-act="closeSheet">Về Thư trai</button>' +
+                '</div></div>';
+            ui.sheet.innerHTML = winHtml;
+            openSheet('tall');
+            return;
+        }
+
+        var q = g.questions[g.idx];
+        var answered = q.chosen !== null;
+        var html = '<div class="lesson-top"><b>🎮 Ghép từ: Câu ' + (g.idx + 1) + ' / ' + g.questions.length + '</b>' +
+            '<button class="btn-ghost" data-act="closeSheet" style="margin-left:auto">Đóng</button></div>' +
+            '<div class="card" style="text-align:center;padding:18px 12px;margin:12px 0">' +
+            '<div class="zh" style="font-size:2.4em;font-weight:700;letter-spacing:4px;color:var(--color-primary,#2563eb)">' + esc(answered ? q.w : q.promptW) + '</div>' +
+            '<div style="font-size:1.1em;color:var(--accent,#b8402c);font-weight:600;margin-top:6px">' + esc(q.py) + '</div>' +
+            '<div class="muted" style="margin-top:4px">Nghĩa: <b>' + esc(q.r) + '</b></div>' +
+            (answered ? '<div style="margin-top:8px"><button class="chip" data-act="speak" data-text="' + esc(q.w) + '">🔈 Nghe phát âm: ' + esc(q.w) + '</button></div>' : '') +
+            '</div>' +
+            '<p class="small muted" style="margin:0 0 8px 0;text-align:center">Chọn chữ đúng để điền vào cụm từ:</p>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' +
+            q.options.map(function(ch) {
+                var cls = 'btn';
+                if (answered) {
+                    if (ch === q.targetCh) cls += ' right';
+                    else if (ch === q.chosen) cls += ' wrong';
+                }
+                var optE = DECK.byChar[ch];
+                return '<button class="' + cls + '" style="font-size:1.35em;padding:12px;display:flex;flex-direction:column;align-items:center" data-act="pickCompound" data-ch="' + esc(ch) + '"' + (answered ? ' disabled' : '') + '>' +
+                    '<b class="zh">' + esc(ch) + '</b>' +
+                    '<span style="font-size:0.65em;color:#666;font-weight:normal">' + esc(optE ? optE.py : '') + '</span>' +
+                    '</button>';
+            }).join('') +
+            '</div>';
+
+        if (answered) {
+            html += '<div class="sheet-foot" style="margin-top:16px"><button class="btn-primary btn-block" data-act="nextCompound">Câu tiếp theo ›</button></div>';
+        }
+        ui.sheet.innerHTML = html;
+        openSheet('tall');
+    }
+
+    function openClozeGame() {
+        var questions = [];
+        var learnedChars = Object.keys(state.items || {});
+        if (!learnedChars.length) learnedChars = DECK.list.slice(0, 15).map(function(e) { return e.ch; });
+
+        learnedChars.forEach(function(ch) {
+            var eg = EXAMPLES.byChar[ch];
+            if (eg && eg.s && eg.s.length >= 4 && eg.s.length <= 15) {
+                questions.push({ s: eg.s, vi: eg.vi, ch: ch });
+            }
+        });
+        if (!questions.length) {
+            toast('Chưa có câu ví dụ phù hợp.');
+            return;
+        }
+        questions = shuffle(questions).slice(0, 5);
+        clozeGame = {
+            questions: questions.map(function(item) {
+                var s = item.s;
+                var ch = item.ch;
+                var blankSentence = s.replace(ch, '[ ? ]');
+                var distractors = [];
+                while (distractors.length < 3) {
+                    var randE = DECK.list[Math.floor(Math.random() * Math.min(100, DECK.list.length))];
+                    if (randE.ch !== ch && distractors.indexOf(randE.ch) < 0) {
+                        distractors.push(randE.ch);
+                    }
+                }
+                var options = shuffle([ch].concat(distractors));
+                return { s: s, blankSentence: blankSentence, ch: ch, vi: item.vi, options: options, chosen: null, ok: false };
+            }),
+            idx: 0,
+            score: 0
+        };
+        renderClozeGameModal();
+    }
+
+    function renderClozeGameModal() {
+        var g = clozeGame;
+        if (!g) return;
+        if (g.idx >= g.questions.length) {
+            var winHtml = '<div class="lesson-top"><b>📖 Kết quả đố ngữ cảnh câu</b>' +
+                '<button class="btn-ghost" data-act="closeSheet" style="margin-left:auto">Đóng</button></div>' +
+                '<div class="card" style="text-align:center;padding:24px 14px">' +
+                '<div style="font-size:3em;margin-bottom:8px">📜</div>' +
+                '<h3>Hoàn thành 5 câu ngữ cảnh!</h3>' +
+                '<p style="font-size:1.15em">Đúng: <b>' + g.score + ' / ' + g.questions.length + '</b> câu</p>' +
+                '<p class="small muted">Học từ trong câu hoàn chỉnh giúp não bộ hình thành phản xạ ngôn ngữ thực thụ.</p>' +
+                '<div class="row" style="justify-content:center;gap:10px;margin-top:16px">' +
+                '<button class="btn-primary" data-act="openClozeGame">Đố tiếp 5 câu mới</button>' +
+                '<button class="btn" data-act="closeSheet">Về Thư trai</button>' +
+                '</div></div>';
+            ui.sheet.innerHTML = winHtml;
+            openSheet('tall');
+            return;
+        }
+
+        var q = g.questions[g.idx];
+        var answered = q.chosen !== null;
+        var html = '<div class="lesson-top"><b>📖 Đố ngữ cảnh câu: ' + (g.idx + 1) + ' / ' + g.questions.length + '</b>' +
+            '<button class="btn-ghost" data-act="closeSheet" style="margin-left:auto">Đóng</button></div>' +
+            '<div class="card" style="padding:16px;margin:12px 0">' +
+            '<div class="zh" style="font-size:1.5em;font-weight:700;line-height:1.6;color:var(--color-primary,#2563eb)">' + esc(answered ? q.s : q.blankSentence) + '</div>' +
+            '<div class="vi-line" style="margin-top:8px;font-size:0.95em;color:#444">' + esc(q.vi) + '</div>' +
+            (answered ? '<div style="margin-top:10px"><button class="chip" data-act="speak" data-text="' + esc(q.s) + '">🔈 Nghe toàn bộ câu</button></div>' : '') +
+            '</div>' +
+            '<p class="small muted" style="margin:0 0 8px 0;text-align:center">Chọn chữ đúng để hoàn thiện câu:</p>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' +
+            q.options.map(function(ch) {
+                var cls = 'btn';
+                if (answered) {
+                    if (ch === q.ch) cls += ' right';
+                    else if (ch === q.chosen) cls += ' wrong';
+                }
+                var optE = DECK.byChar[ch];
+                return '<button class="' + cls + '" style="font-size:1.35em;padding:12px;display:flex;flex-direction:column;align-items:center" data-act="pickCloze" data-ch="' + esc(ch) + '"' + (answered ? ' disabled' : '') + '>' +
+                    '<b class="zh">' + esc(ch) + '</b>' +
+                    '<span style="font-size:0.65em;color:#666;font-weight:normal">' + esc(optE ? optE.py : '') + '</span>' +
+                    '</button>';
+            }).join('') +
+            '</div>';
+
+        if (answered) {
+            html += '<div class="sheet-foot" style="margin-top:16px"><button class="btn-primary btn-block" data-act="nextCloze">Câu tiếp theo ›</button></div>';
+        }
+        ui.sheet.innerHTML = html;
+        openSheet('tall');
+    }
+
     function onClick(ev) {
         var t = ev.target;
         var c = t.closest ? t.closest('.zh-line .c, .tile') : null;
@@ -5220,6 +5506,48 @@
             break;
         case 'dlgRuby': dialog.ruby = !dialog.ruby; renderDialog(); break;
         case 'readSkip': readSkip(); break;
+        case 'openCompoundGame': openCompoundGame(); break;
+        case 'pickCompound': {
+            var ch = el.getAttribute('data-ch');
+            var q = compoundGame.questions[compoundGame.idx];
+            q.chosen = ch;
+            if (ch === q.targetCh) {
+                q.ok = true;
+                compoundGame.score++;
+                sfx('perfect');
+                speak(q.w);
+            } else {
+                sfx('bad');
+            }
+            renderCompoundGameModal();
+            break;
+        }
+        case 'nextCompound': {
+            compoundGame.idx++;
+            renderCompoundGameModal();
+            break;
+        }
+        case 'openClozeGame': openClozeGame(); break;
+        case 'pickCloze': {
+            var ch = el.getAttribute('data-ch');
+            var q = clozeGame.questions[clozeGame.idx];
+            q.chosen = ch;
+            if (ch === q.ch) {
+                q.ok = true;
+                clozeGame.score++;
+                sfx('perfect');
+                speak(q.s);
+            } else {
+                sfx('bad');
+            }
+            renderClozeGameModal();
+            break;
+        }
+        case 'nextCloze': {
+            clozeGame.idx++;
+            renderClozeGameModal();
+            break;
+        }
         case 'setBookTab': bookModalTab = el.getAttribute('data-tab') || 'unlearned'; showBookModal(state.book); break;
         case 'copyBookVocab': copyBookVocab(); break;
         case 'exportBookVocab': exportBookVocab(); break;
