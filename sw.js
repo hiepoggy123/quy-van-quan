@@ -1,5 +1,5 @@
 // Service Worker for Quy Van Quan PWA (Offline Support)
-const CACHE_NAME = 'quy-van-v4';
+const CACHE_NAME = 'quy-van-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -9,6 +9,7 @@ const ASSETS = [
   './quy-van-story.js',
   './quy-van-pairs.js',
   './quy-van-core.js',
+  './quy-van-hanziguru.js',
   './quy-van-audio.js',
   './quy-van-world.js',
   './quy-van-app.js',

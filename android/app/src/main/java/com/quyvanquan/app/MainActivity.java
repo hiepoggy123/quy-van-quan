@@ -127,10 +127,28 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    private long lastBackPressTime = 0;
+
     @Override
     public void onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack();
+        if (webView != null) {
+            webView.evaluateJavascript(
+                "(function() { return (window.QuyVan && typeof window.QuyVan.handleBack === 'function') ? window.QuyVan.handleBack() : false; })();",
+                new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        boolean handled = "true".equalsIgnoreCase(value);
+                        if (!handled) {
+                            if (System.currentTimeMillis() - lastBackPressTime < 2000) {
+                                MainActivity.super.onBackPressed();
+                            } else {
+                                lastBackPressTime = System.currentTimeMillis();
+                                Toast.makeText(MainActivity.this, "Vuốt hoặc nhấn quay lại lần nữa để thoát trò chơi", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                }
+            );
         } else {
             super.onBackPressed();
         }

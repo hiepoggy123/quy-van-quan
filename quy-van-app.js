@@ -5745,10 +5745,45 @@
     function openPracticeHub() {
         place = 'practice';
         updateBottomNavActive('practice');
-        var html = '<div class="sheet-title"><span class="zh">练</span><b>Trung Tâm Luyện Tập & Đấu Pháp</b>' +
+        var html = '<div class="sheet-title"><span class="zh">练</span><b>Trung Tâm Luyện Tập & Đấu Pháp Tiên Nghịch</b>' +
             '<button class="btn-ghost close" data-act="closeSheet">Đóng</button></div>' +
-            '<p class="small muted" style="margin:4px 0 12px 0">Luyện tập từ vựng, ngữ pháp và phản xạ đọc hiểu ngữ cảnh (Chống học vẹt theo chuẩn HanziGuru).</p>' +
+            '<p class="small muted" style="margin:4px 0 12px 0">Hệ thống đấu pháp luyện tập theo 5 công cụ HanziGuru & 12 Pháp Bảo Tiên Nghịch (Chống học vẹt, tiến tới HSK 9 - 11,092 từ).</p>' +
             '<div style="display:flex;flex-direction:column;gap:10px">' +
+            
+            // 0. ĐẤU PHÁP TỐC LÔI (HanziGuru Speed Challenge)
+            '<div class="card" style="border:2px solid #b91c1c;background:linear-gradient(135deg,#fffdf7,#fee2e2);border-radius:12px;padding:12px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<h3 style="margin:0;color:#991b1b"><span class="zh">⚡</span>Đấu Pháp Tốc Lôi (60 Giây)</h3>' +
+            '<span style="background:#b91c1c;color:#fff;padding:2px 8px;border-radius:10px;font-size:0.75em;font-weight:700">HANZIGURU SPEED QUIZ</span>' +
+            '</div>' +
+            '<p class="small muted" style="margin:6px 0 10px 0">Trắc nghiệm phản xạ nhận diện chữ Hán siêu tốc trong 60 giây, nhận linh khí và tu vi dồi dào!</p>' +
+            '<button class="btn-primary btn-block" data-act="startFastQuiz" style="background:#dc2626;border-color:#b91c1c">⚡ Khiêu chiến Tốc Lôi (60s)</button>' +
+            '</div>' +
+
+            // 1. KHO BÁU & PHÁP BẢO TIÊN NGHỊCH
+            '<div class="card" style="border:2px solid #d97706;background:linear-gradient(135deg,#fffdf7,#fef3c7);border-radius:12px;padding:12px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<h3 style="margin:0;color:#b45309"><span class="zh">🔮</span>Kho Báu & Pháp Bảo Tiên Nghịch</h3>' +
+            '<span style="background:#d97706;color:#fff;padding:2px 8px;border-radius:10px;font-size:0.75em;font-weight:700">12 BẢO VẬT</span>' +
+            '</div>' +
+            '<p class="small muted" style="margin:6px 0 10px 0">Thiên Nghịch Châu, Trúc Cơ Đan, Bách Vạn Hồn Phiên, Cực Cảnh... mở khóa theo cấp độ từ vựng đến HSK 9!</p>' +
+            '<button class="btn-primary btn-block" data-act="openTreasures" style="background:#d97706;border-color:#b45309">🔮 Xem 12 Pháp Bảo Đã Thức Tỉnh</button>' +
+            '</div>' +
+
+            // 2. 5 CÔNG CỤ HANZIGURU XÂY NỀN & NÂNG CAO
+            '<div class="card" style="border:2px solid #0284c7;background:#f0f9ff;border-radius:12px;padding:12px">' +
+            '<h3 style="margin:0 0 6px 0;color:#0369a1"><span class="zh">🛠️</span>5 Tuyệt Kỹ HanziGuru Xây Nền</h3>' +
+            '<p class="small muted" style="margin:0 0 10px 0">Kho dữ liệu kinh điển giúp hiểu sâu bản chất chữ Hán, phát âm chuẩn và khẩu ngữ linh hoạt:</p>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+            '<button class="btn" data-act="openCore100" style="font-size:0.85em;padding:8px 4px;font-weight:700">🧱 100 Chữ Trúc Cơ</button>' +
+            '<button class="btn" data-act="openRadicals214" style="font-size:0.85em;padding:8px 4px;font-weight:700">📜 214 Bộ Thủ Đạo Văn</button>' +
+            '<button class="btn" data-act="openPhoneticFamilies" style="font-size:0.85em;padding:8px 4px;font-weight:700">🗡️ Vạn Kiếm Quy Tông</button>' +
+            '<button class="btn" data-act="openMeasureWords" style="font-size:0.85em;padding:8px 4px;font-weight:700">⚖️ Lượng Từ Trực Quan</button>' +
+            '</div>' +
+            '<button class="btn btn-block" data-act="openPinyinMatrix" style="margin-top:8px;font-weight:700;color:#0284c7">🌐 Đại La Âm Trận (Bảng Ma Trận Pinyin)</button>' +
+            '</div>' +
+
+            // 3. ĐẤU PHÁP GHÉP TỪ
             '<div class="card" style="border:2px solid #2563eb;background:rgba(37,99,235,0.03);border-radius:12px;padding:12px">' +
             '<div style="display:flex;justify-content:space-between;align-items:center">' +
             '<h3 style="margin:0"><span class="zh">合</span>Đấu Pháp Ghép Từ (2–3 chữ)</h3>' +
@@ -5757,6 +5792,8 @@
             '<p class="small muted" style="margin:6px 0 10px 0">Ghép chữ Hán thành từ ghép song âm tiết / tam âm tiết có nghĩa, có Pinyin và phát âm bản xứ.</p>' +
             '<button class="btn-primary btn-block" data-act="openCompoundGame">🎮 Chơi ghép từ (5 câu)</button>' +
             '</div>' +
+
+            // 4. ĐỐ NGỮ CẢNH CÂU
             '<div class="card" style="border:2px solid #16a34a;background:rgba(22,163,74,0.03);border-radius:12px;padding:12px">' +
             '<div style="display:flex;justify-content:space-between;align-items:center">' +
             '<h3 style="margin:0"><span class="zh">句</span>Đố Ngữ Cảnh Câu (Cloze Test)</h3>' +
@@ -5765,6 +5802,8 @@
             '<p class="small muted" style="margin:6px 0 10px 0">Điền chữ còn thiếu trong câu văn hoàn chỉnh trích từ kho truyện, luyện nghe toàn câu.</p>' +
             '<button class="btn-primary btn-block" data-act="openClozeGame" style="background:#16a34a;border-color:#15803d">📖 Thử thách câu ngữ cảnh (5 câu)</button>' +
             '</div>' +
+
+            // 5. CẤU TRÚC CÂU VÀNG
             '<div class="card" style="border:2px solid #d97706;background:rgba(217,119,6,0.03);border-radius:12px;padding:12px">' +
             '<div style="display:flex;justify-content:space-between;align-items:center">' +
             '<h3 style="margin:0"><span class="zh">构</span>Cấu Trúc Câu Vàng (HanziGuru)</h3>' +
@@ -5773,6 +5812,7 @@
             '<p class="small muted" style="margin:6px 0 10px 0">Khung giải phẫu câu tiếng Trung S + T + P + M + V + O và 10 mô thức câu HSK kinh điển.</p>' +
             '<button class="btn btn-block" data-act="openHanziBlueprint" style="font-weight:700">📘 Xem Cẩm Nang Cấu Trúc Câu</button>' +
             '</div>' +
+
             '<div class="row" style="gap:8px;margin-top:4px">' +
             '<button class="btn" data-act="openPavilion" style="flex:1">🏮 Đối từ Vọng Vân Đình</button>' +
             '<button class="btn" data-act="openPond" style="flex:1">🎣 Câu cá Hồ sen</button>' +
@@ -5918,6 +5958,374 @@
             return;
         }
         openPlace('pavilion');
+    }
+
+
+    // =========================================================================
+    // HỆ THỐNG CÔNG CỤ HANZIGURU & ĐẤU PHÁP TIÊN NGHỊCH (HSK 9 - 11,092 TỪ)
+    // =========================================================================
+
+    var fastQuiz = {
+        active: false,
+        timer: null,
+        timeLeft: 60,
+        score: 0,
+        questions: [],
+        idx: 0
+    };
+
+    function startFastQuiz() {
+        var known = Object.keys(state.items || {});
+        var pool = known.length >= 8 ? known : Object.keys(DECK.byChar).slice(0, 50);
+        var shuffled = pool.slice().sort(function() { return 0.5 - Math.random(); });
+        fastQuiz.questions = [];
+        fastQuiz.score = 0;
+        fastQuiz.timeLeft = 60;
+        fastQuiz.idx = 0;
+        fastQuiz.active = true;
+
+        for (var i = 0; i < Math.min(15, shuffled.length); i++) {
+            var ch = shuffled[i];
+            var e = DECK.byChar[ch] || { py: '', m: '', hv: '' };
+            var distractors = [];
+            while (distractors.length < 3) {
+                var randCh = pool[Math.floor(Math.random() * pool.length)];
+                if (randCh !== ch && distractors.indexOf(randCh) === -1) distractors.push(randCh);
+            }
+            var opts = [ch].concat(distractors).sort(function() { return 0.5 - Math.random(); });
+            fastQuiz.questions.push({
+                ch: ch,
+                e: e,
+                options: opts,
+                chosen: null,
+                ok: false
+            });
+        }
+
+        renderFastQuizModal();
+        if (fastQuiz.timer) clearInterval(fastQuiz.timer);
+        fastQuiz.timer = setInterval(function() {
+            fastQuiz.timeLeft--;
+            var timeEl = document.getElementById('fastQuizTimer');
+            if (timeEl) timeEl.textContent = fastQuiz.timeLeft + 's';
+            if (fastQuiz.timeLeft <= 0) {
+                clearInterval(fastQuiz.timer);
+                fastQuiz.idx = fastQuiz.questions.length;
+                renderFastQuizModal();
+            }
+        }, 1000);
+    }
+
+    function renderFastQuizModal() {
+        if (!fastQuiz.active) return;
+        if (fastQuiz.idx >= fastQuiz.questions.length || fastQuiz.timeLeft <= 0) {
+            if (fastQuiz.timer) clearInterval(fastQuiz.timer);
+            fastQuiz.active = false;
+            var rewardExp = fastQuiz.score * 8;
+            var rewardLk = fastQuiz.score * 5;
+            state.lk += rewardLk;
+            addExp(rewardExp, 'Đấu Pháp Tốc Lôi');
+            var winHtml = '<div class="lesson-top"><b>⚡ Kết quả Đấu Pháp Tốc Lôi</b>' +
+                '<button class="btn-ghost" data-act="closeSheet" style="margin-left:auto">Đóng</button></div>' +
+                '<div class="card" style="text-align:center;padding:24px 14px;background:linear-gradient(135deg,#fffdf7,#fef3c7);border:2px solid #d97706;border-radius:16px;margin:12px 0">' +
+                '<div style="font-size:3.5em;margin-bottom:6px">⚡</div>' +
+                '<h3>Đại Chiến Tu Ma Hải Kết Thúc!</h3>' +
+                '<p style="font-size:1.2em;font-weight:700;color:var(--red-2);margin:4px 0">Sát thương: Đúng ' + fastQuiz.score + ' / ' + fastQuiz.questions.length + ' chữ</p>' +
+                '<div style="background:rgba(217,119,6,0.1);border:1px dashed #d97706;border-radius:10px;padding:10px;margin:12px 0">' +
+                '<b>Chiến lợi phẩm:</b> +' + rewardLk + ' 灵 Linh Khí · +' + rewardExp + ' 修 Tu Vi' +
+                '</div>' +
+                '<div class="row" style="justify-content:center;gap:10px;margin-top:16px">' +
+                '<button class="btn-primary" data-act="startFastQuiz">Đấu tiếp hiệp mới</button>' +
+                '<button class="btn" data-act="openPractice">Về Luyện Tập</button>' +
+                '</div></div>';
+            ui.sheet.innerHTML = winHtml;
+            openSheet('tall');
+            return;
+        }
+
+        var q = fastQuiz.questions[fastQuiz.idx];
+        var answered = q.chosen !== null;
+        var html = '<div class="lesson-top">' +
+            '<b>⚡ Đấu Pháp: Câu ' + (fastQuiz.idx + 1) + '/' + fastQuiz.questions.length + '</b>' +
+            '<span id="fastQuizTimer" style="background:#b91c1c;color:#fff;font-weight:800;padding:2px 8px;border-radius:10px;font-size:0.85em;margin-left:8px">' + fastQuiz.timeLeft + 's</span>' +
+            '<button class="btn-ghost" data-act="closeSheet" style="margin-left:auto">Rút lui</button></div>' +
+            '<div class="card" style="text-align:center;padding:20px 10px;margin:12px 0;background:#fffdf7;border:2px solid var(--line);border-radius:14px">' +
+            '<div class="zh" style="font-size:3.8em;font-weight:700;line-height:1.1;color:var(--ink)">' + esc(q.ch) + '</div>' +
+            (answered ? '<div style="margin-top:8px"><button class="chip" data-act="speak" data-text="' + esc(q.ch) + '">🔈 ' + esc(q.e.py) + ' · ' + esc(q.e.hv) + '</button></div>' : '<p class="small muted" style="margin:8px 0 0">Chọn Pinyin và nghĩa đúng:</p>') +
+            '</div>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
+
+        for (var i = 0; i < q.options.length; i++) {
+            var optCh = q.options[i];
+            var optE = DECK.byChar[optCh] || { py: '', hv: '', m: '' };
+            var btnCls = 'btn';
+            if (answered) {
+                if (optCh === q.ch) btnCls += ' right';
+                else if (optCh === q.chosen) btnCls += ' wrong';
+            }
+            html += '<button class="' + btnCls + '" style="font-size:1.1em;padding:12px 6px;display:flex;flex-direction:column;align-items:center" data-act="pickFastQuiz" data-ch="' + esc(optCh) + '"' + (answered ? ' disabled' : '') + '>' +
+                '<b style="color:var(--red-2)">' + esc(optE.py || optCh) + '</b>' +
+                '<span style="font-size:0.75em;color:#444;font-weight:normal;margin-top:2px">' + esc(optE.hv || optE.m) + '</span>' +
+                '</button>';
+        }
+        html += '</div>';
+
+        if (answered) {
+            html += '<div class="sheet-foot" style="margin-top:14px"><button class="btn-primary btn-block" data-act="nextFastQuiz">Xuất chiêu tiếp theo ›</button></div>';
+        }
+        ui.sheet.innerHTML = html;
+        openSheet('tall');
+    }
+
+    function openCore100Modal() {
+        var list = (window.HZ_TOOLS && window.HZ_TOOLS.CORE_100) || [];
+        var html = '<div class="lesson-top"><b>🧱 Bách Tự Trúc Cơ (100 Chữ Hán Xây Nền)</b>' +
+            '<button class="btn-ghost" data-act="openPractice" style="margin-left:auto">‹ Quay lại</button></div>' +
+            '<div class="card" style="margin:10px 0;background:linear-gradient(135deg,#fcf8ec,#f5e9cb);border:1.5px solid var(--line);border-radius:12px;padding:12px">' +
+            '<b>Bảo điển nền móng:</b> 100 chữ tượng hình và chỉ sự cơ bản nhất theo giáo trình HanziGuru. Làm chủ 100 chữ này là đan điền ngưng tụ linh khí, phá toái hư không!' +
+            '</div>' +
+            '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px">';
+
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += '<button class="card" style="text-align:center;padding:8px 4px;margin:0;cursor:pointer;border:1px solid var(--line);border-radius:10px" data-act="speakCard" data-text="' + esc(item.ch) + '">' +
+                '<div class="zh" style="font-size:1.8em;font-weight:700;line-height:1">' + esc(item.ch) + '</div>' +
+                '<div style="font-size:0.75em;color:var(--red-2);font-weight:700;margin-top:2px">' + esc(item.py) + '</div>' +
+                '<div style="font-size:0.7em;color:#666">' + esc(item.hv) + '</div>' +
+                '</button>';
+        }
+        html += '</div>';
+        ui.sheet.innerHTML = html;
+        openSheet('tall');
+    }
+
+    function openRadicals214Modal() {
+        var list = (window.HZ_TOOLS && window.HZ_TOOLS.RADICALS_214) || [];
+        var html = '<div class="lesson-top"><b>📜 Thiên Địa Đạo Văn (214 Bộ Thủ Khang Hy)</b>' +
+            '<button class="btn-ghost" data-act="openPractice" style="margin-left:auto">‹ Quay lại</button></div>' +
+            '<div class="card" style="margin:10px 0;background:#f8fafc;border:1.5px solid #0284c7;border-radius:12px;padding:12px">' +
+            '<b>214 Bộ Thủ Khang Hy:</b> Mỗi bộ thủ là một cấu kiện đạo văn ngũ hành biểu ý. Nhìn bộ thủ là thấu suốt bản chất chữ!' +
+            '</div>' +
+            '<div style="display:flex;flex-direction:column;gap:8px">';
+
+        for (var i = 0; i < list.length; i++) {
+            var r = list[i];
+            html += '<div class="card" style="display:flex;align-items:center;gap:12px;padding:10px 12px;margin:0">' +
+                '<div class="zh" style="font-size:2em;font-weight:700;color:var(--red-2);min-width:44px;text-align:center">' + esc(r.r) + '</div>' +
+                '<div style="flex:1;min-width:0">' +
+                '<div style="font-weight:700;font-size:0.95em">Bộ ' + esc(r.n) + ' <span style="font-size:0.8em;color:#666">(' + r.s + ' nét)</span></div>' +
+                '<div class="small muted" style="font-size:0.82em">' + esc(r.m) + '</div>' +
+                '</div>' +
+                '<button class="chip" data-act="speak" data-text="' + esc(r.r[0]) + '" style="font-size:0.75em;padding:2px 8px">🔈</button>' +
+                '</div>';
+        }
+        html += '</div>';
+        ui.sheet.innerHTML = html;
+        openSheet('tall');
+    }
+
+    function openPhoneticFamiliesModal() {
+        var families = (window.HZ_TOOLS && window.HZ_TOOLS.PHONETIC_FAMILIES) || [];
+        var html = '<div class="lesson-top"><b>🗡️ Vạn Kiếm Quy Tông (Họ Chữ Hình Thanh)</b>' +
+            '<button class="btn-ghost" data-act="openPractice" style="margin-left:auto">‹ Quay lại</button></div>' +
+            '<div class="card" style="margin:10px 0;background:linear-gradient(135deg,#fcf8ec,#f5e9cb);border:1.5px solid var(--line);border-radius:12px;padding:12px">' +
+            '<b>Quy tắc hình thanh:</b> 80% chữ Hán cấu tạo từ một gốc biểu âm kết hợp bộ thủ biểu ý. Nắm 1 gốc phát âm là thông suốt cả một môn phái chữ!' +
+            '</div>' +
+            '<div style="display:flex;flex-direction:column;gap:12px">';
+
+        for (var i = 0; i < families.length; i++) {
+            var f = families[i];
+            html += '<div class="card" style="padding:12px;margin:0;border:2px solid var(--line);border-radius:12px">' +
+                '<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px dashed #ccc;padding-bottom:6px;margin-bottom:8px">' +
+                '<div style="display:flex;align-items:center;gap:8px">' +
+                '<span class="zh" style="font-size:1.8em;font-weight:700;color:var(--red-2)">' + esc(f.root) + '</span>' +
+                '<div><b>Họ gốc [' + esc(f.rootPy) + ']</b><div class="small muted">' + esc(f.meaning) + '</div></div>' +
+                '</div>' +
+                '<button class="chip" data-act="speak" data-text="' + esc(f.root) + '" style="font-size:0.75em">🔈 Nghe gốc</button>' +
+                '</div>' +
+                '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px">';
+            for (var j = 0; j < f.members.length; j++) {
+                var m = f.members[j];
+                html += '<div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:6px 8px;display:flex;align-items:center;gap:6px">' +
+                    '<span class="zh" style="font-size:1.4em;font-weight:700;color:#0f172a">' + esc(m.ch) + '</span>' +
+                    '<div style="flex:1;min-width:0;font-size:0.75em">' +
+                    '<div style="font-weight:700;color:var(--red-2)">' + esc(m.py) + '</div>' +
+                    '<div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(m.m) + '</div>' +
+                    '</div>' +
+                    '</div>';
+            }
+            html += '</div></div>';
+        }
+        html += '</div>';
+        ui.sheet.innerHTML = html;
+        openSheet('tall');
+    }
+
+    function openMeasureWordsModal() {
+        var list = (window.HZ_TOOLS && window.HZ_TOOLS.MEASURE_WORDS) || [];
+        var html = '<div class="lesson-top"><b>⚖️ Vạn Vật Danh Số Biểu (Lượng Từ Trực Quan)</b>' +
+            '<button class="btn-ghost" data-act="openPractice" style="margin-left:auto">‹ Quay lại</button></div>' +
+            '<div class="card" style="margin:10px 0;background:#f8fafc;border:1.5px solid #0284c7;border-radius:12px;padding:12px">' +
+            '<b>Bảo bối danh số:</b> Tiếng Trung dùng lượng từ riêng biệt cho từng hình dạng vật thể. Nắm vững lượng từ giúp khẩu ngữ tự nhiên như người bản xứ!' +
+            '</div>' +
+            '<div style="display:flex;flex-direction:column;gap:10px">';
+
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += '<div class="card" style="padding:12px;margin:0;border:1.5px solid var(--line);border-radius:12px">' +
+                '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">' +
+                '<span style="font-size:2em">' + item.icon + '</span>' +
+                '<div>' +
+                '<b class="zh" style="font-size:1.4em;color:var(--red-2)">' + esc(item.word) + '</b> <span style="font-size:0.9em;color:#666">[' + esc(item.py) + ']</span>' +
+                '<div class="small muted">' + esc(item.use) + '</div>' +
+                '</div></div>' +
+                '<div style="display:flex;flex-direction:column;gap:4px;background:#fff;border-radius:8px;padding:8px;border:1px solid #eee">';
+            for (var j = 0; j < item.examples.length; j++) {
+                var ex = item.examples[j];
+                html += '<div style="display:flex;justify-content:space-between;align-items:center;font-size:0.85em">' +
+                    '<div><b class="zh" style="font-size:1.1em">' + esc(ex.zh) + '</b> <span style="color:#666;font-size:0.85em">(' + esc(ex.py) + ')</span> — ' + esc(ex.vi) + '</div>' +
+                    '<button class="chip" data-act="speak" data-text="' + esc(ex.zh) + '" style="font-size:0.7em;padding:1px 6px">🔈</button>' +
+                    '</div>';
+            }
+            html += '</div></div>';
+        }
+        html += '</div>';
+        ui.sheet.innerHTML = html;
+        openSheet('tall');
+    }
+
+    function openPinyinMatrixModal() {
+        var inits = (window.HZ_TOOLS && window.HZ_TOOLS.INITIALS) || [];
+        var finals = (window.HZ_TOOLS && window.HZ_TOOLS.FINALS) || [];
+        var html = '<div class="lesson-top"><b>🌐 Đại La Âm Trận (Ma Trận Âm Tiết Pinyin)</b>' +
+            '<button class="btn-ghost" data-act="openPractice" style="margin-left:auto">‹ Quay lại</button></div>' +
+            '<div class="card" style="margin:10px 0;background:linear-gradient(135deg,#fcf8ec,#f5e9cb);border:1.5px solid var(--line);border-radius:12px;padding:12px">' +
+            '<b>Bảng ma trận âm thanh:</b> Chạm vào bất kỳ âm tiết nào bên dưới để nghe giọng phát âm bản xứ chuẩn mực!' +
+            '</div>' +
+            '<p class="small muted" style="margin:4px 0 8px 0">Thanh mẫu (Initials):</p>' +
+            '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">';
+        for (var i = 0; i < inits.length; i++) {
+            html += '<button class="chip" data-act="speakPinyin" data-syll="' + inits[i] + 'a" style="font-size:0.9em;padding:4px 10px;font-weight:700">' + inits[i] + '</button>';
+        }
+        html += '</div>' +
+            '<p class="small muted" style="margin:4px 0 8px 0">Vận mẫu (Finals):</p>' +
+            '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">';
+        for (var j = 0; j < finals.length; j++) {
+            html += '<button class="chip" data-act="speakPinyin" data-syll="' + finals[j] + '" style="font-size:0.9em;padding:4px 10px;font-weight:700">' + finals[j] + '</button>';
+        }
+        html += '</div>' +
+            '<p class="small muted" style="margin:4px 0 8px 0">Các âm tiết song hành thường gặp (Chạm để nghe):</p>' +
+            '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px">';
+        var sampleSylls = ['ba', 'pa', 'ma', 'fa', 'da', 'ta', 'na', 'la', 'ga', 'ka', 'ha', 'ji', 'qi', 'xi', 'zha', 'cha', 'sha', 'zi', 'ci', 'si', 'wo', 'ni', 'ta', 'hao', 'ren', 'dao', 'tian', 'di'];
+        for (var k = 0; k < sampleSylls.length; k++) {
+            html += '<button class="card" style="text-align:center;padding:8px 4px;margin:0;cursor:pointer;font-weight:700;color:var(--red-2)" data-act="speakPinyin" data-syll="' + sampleSylls[k] + '">' + sampleSylls[k] + '</button>';
+        }
+        html += '</div>';
+
+        ui.sheet.innerHTML = html;
+        openSheet('tall');
+    }
+
+    var TIEN_NGHICH_TREASURES = [
+        { id: 'thien_nghich', name: 'Thiên Nghịch Châu', img: 'assets/items/icon_tu_tinh.png', level: 1, req: 50, desc: 'Bảo vật chí cao vô thượng Vương Lâm nhặt được trong sơn động Hằng Nhạc Phái. Không gian chứa đựng thời gian gia tốc 10 lần.' },
+        { id: 'truc_kiem', name: 'Hằng Nhạc Phi Kiếm', img: 'assets/items/icon_bamboo_sword.png', level: 2, req: 150, desc: 'Phi kiếm gỗ Hằng Nhạc Phái ban tặng, dùng dẫn lực thuật ngự kiếm phi hành.' },
+        { id: 'can_khon', name: 'Túi Càn Khôn', img: 'assets/items/icon_tui_can_khon.png', level: 3, req: 350, desc: 'Túi trữ vật chứa đựng đan dược, linh thạch và công pháp tu tiên.' },
+        { id: 'truc_co_dan', name: 'Trúc Cơ Đan', img: 'assets/items/icon_pill_gold.png', level: 4, req: 650, desc: 'Đan dược chí bảo giúp ngưng khí viên mãn đột phá cảnh giới Trúc Cơ.' },
+        { id: 'dinh_than', name: 'Bí Tịch Định Thân Thuật', img: 'assets/items/icon_bi_tich_dinh_than.png', level: 5, req: 1100, desc: 'Thần thông độc môn của Tư Đồ Nam truyền lại, định trụ thân hình và thần thức kẻ địch!' },
+        { id: 'hon_phien', name: 'Bách Vạn Hồn Phiên', img: 'assets/items/icon_hon_phien.png', level: 6, req: 1800, desc: 'Pháp bảo ma đạo kinh điển của Vương Lâm tại Tu Ma Hải, dung nạp vạn quỷ ma hồn.' },
+        { id: 'cuc_canh', name: 'Cực Cảnh Thần Thức', img: 'assets/items/icon_bi_tich_loi.png', level: 7, req: 2800, desc: 'Lôi đình biến dị sinh ra Cực Cảnh Thần Thức vô địch đồng cấp, sát phạt kinh thiên động địa.' },
+        { id: 'khac_moc', name: 'Khắc Mộc Thần Đao', img: 'assets/items/icon_iron_saber.png', level: 9, req: 4200, desc: 'Dao chạm khắc gỗ Vương Lâm dùng trong những năm tháng Hóa Phàm ngộ Sinh Tử Ý Cảnh.' },
+        { id: 'chu_tuoc', name: 'Chu Tước Thần Hỏa', img: 'assets/items/icon_dan_phuong.png', level: 11, req: 7500, desc: 'Ngọn lửa thần thú Chu Tước Tinh truyền thừa, thiêu đốt vạn vật càn khôn.' },
+        { id: 'tan_da', name: 'Tàn Dạ Thần Thông', img: 'assets/items/icon_bi_tich_van_kiem_quy_tong.png', level: 12, req: 9000, desc: 'Đêm tàn trời rạng, thần thông sáng thế chấn động La Thiên Tinh Vực do chính Vương Lâm sáng tạo.' },
+        { id: 'co_than', name: 'Cổ Thần Cửu Tinh', img: 'assets/items/icon_luc_tinh.png', level: 13, req: 10200, desc: 'Cửu tinh ấn ký Cổ Thần Đồ Tư trên mi tâm, nhục thân bất tử bất diệt xé rách tinh không.' },
+        { id: 'dap_thien', name: 'Đạp Thiên Nghịch Mệnh', img: 'assets/items/icon_dong_hoang_chung.png', level: 15, req: 11092, desc: 'Đạp Thiên Chi Đạo tối thượng! Cứu sống Lý Mộ Uyển, thông thuộc toàn bộ 11,092 từ HSK 9 tuyệt đỉnh!' }
+    ];
+
+    function openTreasuresModal() {
+        var learnedCount = Object.keys(state.items || {}).length;
+        var html = '<div class="lesson-top"><b>🔮 Kho Báu & Pháp Bảo Tiên Nghịch</b>' +
+            '<button class="btn-ghost" data-act="openPractice" style="margin-left:auto">‹ Quay lại</button></div>' +
+            '<div class="card" style="margin:10px 0;background:linear-gradient(135deg,#fcf8ec,#f5e9cb);border:1.5px solid var(--line);border-radius:12px;padding:12px">' +
+            '<b>Pháp bảo thức tỉnh:</b> Mỗi pháp bảo đại diện cho một mốc cảnh giới tu chân theo tiểu thuyết Tiên Nghịch. Học đủ số từ Hán để thức tỉnh uy lực bảo vật!' +
+            '</div>' +
+            '<div style="display:flex;flex-direction:column;gap:10px">';
+
+        for (var i = 0; i < TIEN_NGHICH_TREASURES.length; i++) {
+            var t = TIEN_NGHICH_TREASURES[i];
+            var isUnlocked = learnedCount >= t.req;
+            var pctVal = Math.min(100, Math.round((learnedCount / t.req) * 100));
+
+            html += '<div class="card" style="display:flex;align-items:center;gap:12px;padding:12px;margin:0;border:1.5px solid ' + (isUnlocked ? '#d97706' : 'var(--line)') + ';background:' + (isUnlocked ? '#fffef7' : 'var(--paper-2)') + ';border-radius:12px">' +
+                '<div style="width:48px;height:48px;flex:none;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:10px;border:1px solid #ccc;overflow:hidden">' +
+                '<img src="' + esc(t.img) + '" style="width:36px;height:36px;object-fit:contain;' + (isUnlocked ? '' : 'filter:grayscale(100%) opacity(40%);') + '" alt="' + esc(t.name) + '">' +
+                '</div>' +
+                '<div style="flex:1;min-width:0">' +
+                '<div style="display:flex;align-items:center;justify-content:space-between">' +
+                '<b style="font-size:1em;color:' + (isUnlocked ? 'var(--red-2)' : '#666') + '">' + esc(t.name) + '</b>' +
+                '<span style="font-size:0.75em;font-weight:700;color:' + (isUnlocked ? '#16a34a' : '#d97706') + '">' + (isUnlocked ? '⚡ ĐÃ THỨC TỈNH' : learnedCount + ' / ' + t.req + ' từ (' + pctVal + '%)') + '</span>' +
+                '</div>' +
+                '<div class="small muted" style="font-size:0.8em;margin-top:2px">' + esc(t.desc) + '</div>' +
+                '<div style="height:5px;background:rgba(0,0,0,0.08);border-radius:3px;overflow:hidden;margin-top:6px">' +
+                '<div style="height:100%;width:' + pctVal + '%;background:' + (isUnlocked ? '#16a34a' : '#d97706') + '"></div>' +
+                '</div></div></div>';
+        }
+        html += '</div>';
+
+        ui.sheet.innerHTML = html;
+        openSheet('tall');
+    }
+
+    // Xử lý nút Back của Android (chống thoát nhầm khi vuốt back)
+    function handleBack() {
+        if (fastQuiz && fastQuiz.active) {
+            if (fastQuiz.timer) clearInterval(fastQuiz.timer);
+            fastQuiz.active = false;
+            closeSheet();
+            return true;
+        }
+        if (stroke && stroke.open) {
+            closeCard();
+            return true;
+        }
+        if (card) {
+            closeCard();
+            return true;
+        }
+        if (!ui.sheet.hidden) {
+            closeSheet();
+            return true;
+        }
+        if (fishing) {
+            endFishing();
+            return true;
+        }
+        if (cooking) {
+            cooking = null;
+            renderPlace();
+            return true;
+        }
+        if (dialog) {
+            dialog = null;
+            renderPlace();
+            return true;
+        }
+        if (riddle) {
+            riddle = null;
+            renderPlace();
+            return true;
+        }
+        if (paper) {
+            paper = null;
+            renderPlace();
+            return true;
+        }
+        if (place) {
+            place = null;
+            updateBottomNavActive('world');
+            renderPlace();
+            return true;
+        }
+        return false;
     }
 
     function onClick(ev) {
@@ -6071,6 +6479,44 @@
         }
         case 'openPractice': openPracticeHub(); break;
         case 'openHanziBlueprint': openHanziBlueprint(); break;
+
+        case 'startFastQuiz': startFastQuiz(); break;
+        case 'pickFastQuiz': {
+            var ch = el.getAttribute('data-ch');
+            var q = fastQuiz.questions[fastQuiz.idx];
+            q.chosen = ch;
+            if (ch === q.ch) {
+                q.ok = true;
+                fastQuiz.score++;
+                sfx('perfect');
+            } else {
+                sfx('bad');
+            }
+            renderFastQuizModal();
+            break;
+        }
+        case 'nextFastQuiz': {
+            fastQuiz.idx++;
+            renderFastQuizModal();
+            break;
+        }
+        case 'openCore100': openCore100Modal(); break;
+        case 'openRadicals214': openRadicals214Modal(); break;
+        case 'openPhoneticFamilies': openPhoneticFamiliesModal(); break;
+        case 'openMeasureWords': openMeasureWordsModal(); break;
+        case 'openPinyinMatrix': openPinyinMatrixModal(); break;
+        case 'openTreasures': openTreasuresModal(); break;
+        case 'speakPinyin': {
+            var syll = el.getAttribute('data-syll') || '';
+            speak(syll);
+            break;
+        }
+        case 'speakCard': {
+            var txt = el.getAttribute('data-text') || '';
+            speak(txt);
+            break;
+        }
+
         case 'openQuizFromQuest': openQuizFromQuest(); break;
         case 'doEventQuest': doEventQuest(); break;
         case 'openPavilion': openPlace('pavilion'); break;
@@ -6524,6 +6970,7 @@
 
     // Móc cho kiểm tra tự động (headless): đọc state, mở nơi chốn, trả lời.
     window.QuyVan = {
+        handleBack: handleBack,
         state: function () { return state; },
         deck: DECK,
         openPlace: openPlace,

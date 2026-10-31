@@ -82,14 +82,21 @@
     var STAGE_LABELS = ['Chưa học', 'Mới học', 'Mới học', 'Mới học', 'Mới học', 'Đã thuộc', 'Đã thuộc',
         'Nhớ lâu', 'Khắc cốt', 'Thành thạo'];
     var REALMS = [
-        { level: 1, name: 'Sơ Nhập Đạo Môn', title: 'Đạo Đồng', minExp: 0, maxExp: 100, icon: '🌱', desc: 'Mới bước chân vào núi mây, làm quen chữ Hán cơ bản.' },
-        { level: 2, name: 'Đồng Sinh Luyện Khí', title: 'Đồng Sinh', minExp: 100, maxExp: 300, icon: '📜', desc: 'Nhận diện mặt chữ, âm Hán Việt và Pinyin vững vàng.' },
-        { level: 3, name: 'Thư Sinh Trúc Cơ', title: 'Thư Sinh', minExp: 300, maxExp: 650, icon: '🖋️', desc: 'Nắm vững hơn 50 chữ Hán và các từ ghép 2 chữ quen thuộc.' },
-        { level: 4, name: 'Tú Tài Kết Đan', title: 'Tú Tài', minExp: 650, maxExp: 1200, icon: '🏮', desc: 'Hiểu rõ 47 bộ thủ và Khung Cấu Trúc Câu Vàng tiếng Trung.' },
-        { level: 5, name: 'Cử Nhân Kim Đan', title: 'Cử Nhân', minExp: 1200, maxExp: 2000, icon: '⚔️', desc: 'Đọc hiểu mượt mà các mẩu chuyện Liêu Trai và truyện .txt tải lên.' },
-        { level: 6, name: 'Tiến Sĩ Nguyên Anh', title: 'Tiến Sĩ', minExp: 2000, maxExp: 3200, icon: '🏯', desc: 'Tư duy câu chữ bằng ngữ cảnh thực tế, triệt tiêu học vẹt.' },
-        { level: 7, name: 'Học Sĩ Hóa Thần', title: 'Học Sĩ', minExp: 3200, maxExp: 5000, icon: '🌸', desc: 'Phản xạ đọc hiểu tự nhiên, giải đố ngữ cảnh nhanh chóng.' },
-        { level: 8, name: 'Đại Nho Đắc Đạo', title: 'Đại Nho', minExp: 5000, maxExp: 999999, icon: '🌟', desc: 'Chưởng Quán Quy Vân, thông kim bác cổ, xuất khẩu thành chương.' }
+        { level: 1, name: 'Phàm Nhân Tạp Dịch', title: 'Tạp Dịch', minExp: 0, maxExp: 50, icon: '🪵', desc: 'Vương Lâm (Thiết Trụ) vừa bước lên Hằng Nhạc Phái, làm tạp dịch gánh nước chẻ củi, may mắn nhặt được Thiên Nghịch Châu trong sơn động.' },
+        { level: 2, name: 'Ngưng Khí Tầng 1 - 5', title: 'Ngưng Khí', minExp: 50, maxExp: 150, icon: '🌱', desc: 'Tư Đồ Nam trong Thiên Nghịch Châu tỉnh giấc, chỉ điểm hô hấp thổ nạp, linh khí nhập thể đan điền.' },
+        { level: 3, name: 'Ngưng Khí Tầng 6 - 10', title: 'Ngưng Khí', minExp: 150, maxExp: 350, icon: '📜', desc: 'Luyện thành dẫn lực thuật, ngự sử phi kiếm gỗ, mở rộng thần thức nhận biết vạn vật xung quanh.' },
+        { level: 4, name: 'Ngưng Khí Đỉnh Phong (Tầng 11-15)', title: 'Đỉnh Phong', minExp: 350, maxExp: 650, icon: '⚔️', desc: 'Tham gia tông môn đại tỷ Hằng Nhạc Phái, đoạt Trúc Cơ Đan, chuẩn bị xung kích Trúc Cơ.' },
+        { level: 5, name: 'Trúc Cơ Sơ Kỳ', title: 'Trúc Cơ', minExp: 650, maxExp: 1100, icon: '🏮', desc: 'Đan điền hóa dịch, kinh mạch mở rộng, bước vào con đường nghịch thiên cải mệnh thực thụ.' },
+        { level: 6, name: 'Trúc Cơ Viên Mãn', title: 'Trúc Cơ', minExp: 1100, maxExp: 1800, icon: '💎', desc: 'Dấn thân vào Tu Ma Hải, luyện chế Huyết Kiếm và Hồn Phiên, kinh nghiệm sinh tử phong phú.' },
+        { level: 7, name: 'Kết Đan Kỳ (Cực Cảnh)', title: 'Kết Đan', minExp: 1800, maxExp: 2800, icon: '⚡', desc: 'Dung hợp thiên kiếp lôi đình, sinh ra Cực Cảnh Thần Thức vô địch đồng cấp, sát phạt quyết đoán!' },
+        { level: 8, name: 'Nguyên Anh Kỳ', title: 'Nguyên Anh', minExp: 2800, maxExp: 4200, icon: '🏯', desc: 'Ngưng kết Nguyên Anh, nhục thân dù nát hồn vẫn bất diệt, xưng bá một phương tại Triệu Quốc.' },
+        { level: 9, name: 'Hóa Thần Kỳ (Hóa Phàm)', title: 'Hóa Thần', minExp: 4200, maxExp: 5800, icon: '🌸', desc: 'Trở về nhân gian làm người thợ khắc gỗ, ngộ ra Sinh Tử Ý Cảnh: Sinh là điểm đầu của Tử, Tử là điểm về của Sinh.' },
+        { level: 10, name: 'Anh Biến Kỳ', title: 'Anh Biến', minExp: 5800, maxExp: 7500, icon: '🔥', desc: 'Hấp thu tiên khí, chuyển hóa ma khí thành tiên lực, đặt chân lên vũ trụ tinh không Chu Tước Tinh.' },
+        { level: 11, name: 'Vấn Đỉnh Kỳ (Chu Tước Tử)', title: 'Vấn Đỉnh', minExp: 7500, maxExp: 9000, icon: '🦅', desc: 'Kế thừa Chu Tước Thần Đạo, chấp chưởng phong vân Chu Tước Tinh, chuẩn bị phá toái hư không.' },
+        { level: 12, name: 'Đệ Nhị Bộ: Khuy Niết - Tịnh Niết - Toái Niết', title: 'Toái Niết', minExp: 9000, maxExp: 10200, icon: '🌌', desc: 'Tung hoành La Thiên Tinh Vực, ngộ Chân Giả Ý Cảnh và Nhân Quả Ý Cảnh, sáng tạo Tàn Dạ thần thông.' },
+        { level: 13, name: 'Đệ Tam Bộ: Không Niết - Không Linh - Không Huyền', title: 'Không Huyền', minExp: 10200, maxExp: 10800, icon: '🔮', desc: 'Vượt qua hư vô bản nguyên, đúc thành Cổ Thần Cửu Tinh, thần thông chấn động Giới Nội Giới Ngoại.' },
+        { level: 14, name: 'Không Kiếp Kỳ / Đại Thiên Tôn', title: 'Thiên Tôn', minExp: 10800, maxExp: 11091, icon: '👑', desc: 'Đỉnh phong Tiên Cương Đại Lục, chúa tể quy tắc càn khôn vạn vật, bước chân tới cánh cửa Đạp Thiên.' },
+        { level: 15, name: 'Đạp Thiên Cảnh (Cực Đạo Đỉnh Phong - 11092 từ HSK 9)', title: 'Đạp Thiên', minExp: 11092, maxExp: 999999, icon: '🌟', desc: 'Cửu Khinh Đạp Thiên, nghịch chuyển luân hồi cứu Lý Mộ Uyển! Nắm giữ trọn vẹn 11,092 từ Hán ngữ HSK 9 tối cao!' }
     ];
 
     function getRealm(exp) {

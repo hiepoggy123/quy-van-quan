@@ -8,4 +8,5 @@ build/
 android/.gradle/
 android/app/build/
 *.apk
+tutien_assets/
 

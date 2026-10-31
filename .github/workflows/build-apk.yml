@@ -31,19 +31,20 @@ jobs:
           cp manifest.json android/app/src/main/assets/
           cp icon-192.png android/app/src/main/assets/
           cp sw.js android/app/src/main/assets/
+          cp -r assets android/app/src/main/assets/
           echo "Web assets successfully copied into Android assets directory."
 
       - name: Make Gradlew Executable
         run: chmod +x android/gradlew
 
-      - name: Build Debug APK
+      - name: Build Release APK
         run: |
           cd android
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleRelease --no-daemon
 
       - name: Copy and Rename APK
         run: |
-          cp android/app/build/outputs/apk/debug/app-debug.apk QuyVanQuan.apk
+          cp android/app/build/outputs/apk/release/app-release.apk QuyVanQuan.apk
           ls -lh QuyVanQuan.apk
 
       - name: Upload APK Artifact
@@ -58,13 +59,22 @@ jobs:
         if: github.ref == 'refs/heads/main'
         with:
           tag_name: latest
-          name: "Quy Vân Quán APK - Phiên bản mới nhất"
+          name: "Quy Vân Quán / Tiên Nghịch APK (HSK 9) - Bản Release"
           body: |
-            ### 🏮 Quy Vân Quán — Game Học Tiếng Trung (Pinyin & Nghĩa Việt)
-            - **Thông báo nhắc nhở**: Tự động nhắc nhở mỗi 4 giờ một lần (trong khung giờ 7:00 - 21:00).
-            - **Học theo file .txt**: Tải truyện hoặc tài liệu tiếng Trung lên để tự động lọc ra bộ từ xuất hiện nhiều nhất.
-            - **Lộ trình tinh chỉnh**: Luôn hiển thị Pinyin và nghĩa tiếng Việt, không bị hỏi đố các câu chưa học.
-            - **Phát âm chuẩn**: Tích hợp giọng đọc tiếng Trung Bắc Kinh rõ ràng.
+            ### ⚡ Hằng Nhạc Phái · Tiên Nghịch — Game Tu Tiên Học Tiếng Trung (HSK 9)
+            - **Cảnh giới Tiên Nghịch 15 tầng**: Từ Phàm Nhân Tạp Dịch (Vương Lâm) đến Đạp Thiên Cảnh (11,092 từ HSK 9).
+            - **12 Pháp Bảo Thần Thông**: Thiên Nghịch Châu, Trúc Kiếm, Càn Khôn Túi, Trúc Cơ Đan, Định Thân Thuật, Bách Vạn Hồn Phiên, Cực Cảnh Thần Thức...
+            - **5 Tuyệt kỹ HanziGuru**:
+              - 🧱 Bách Tự Trúc Cơ (100 Chữ Hán xây nền)
+              - 📜 Thiên Địa Đạo Văn (214 Bộ Thủ Khang Hy)
+              - 🗡️ Vạn Kiếm Quy Tông (Khám phá Họ chữ hình thanh)
+              - ⚖️ Vạn Vật Danh Số (Lượng từ trực quan kèm ví dụ)
+              - 🌐 Đại La Âm Trận (Bảng ma trận âm tiết Pinyin bản xứ)
+            - **Đấu Pháp Tốc Lôi (60s)**: Thử thách phản xạ nhận diện chữ Hán siêu tốc.
+            - **Sửa thao tác vuốt Back trên Android**: Tránh thoát nhầm ứng dụng khi vuốt quay lại; đóng tuần tự modal/sheet/đấu pháp trước khi xác nhận thoát.
+            - **Tích hợp kho 800+ tài nguyên tĩnh**: Đan dược, vũ khí, thần thông, aura tu chân.
+            - **Học theo file .txt**: Tải truyện hoặc tài liệu tiếng Trung lên để tự động trích lọc từ vựng theo tần suất.
+            - **Thông báo nhắc nhở 4h/lần**: Tự động nhắc nhở trong khung giờ 7:00 - 21:00.
           files: QuyVanQuan.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
