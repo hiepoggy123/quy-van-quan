@@ -23,9 +23,6 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Prepare Web Assets for Android
         run: |
           mkdir -p android/app/src/main/assets
