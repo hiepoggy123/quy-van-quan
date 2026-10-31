@@ -45,3 +45,18 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.work:work-runtime:2.9.0'
 }
+
+tasks.register('copyWebAssets', Copy) {
+    from('../../') {
+        include 'index.html'
+        include 'quy-van-*.js'
+        include 'manifest.json'
+        include 'icon-192.png'
+        include 'sw.js'
+        include 'assets/**'
+    }
+    into 'src/main/assets'
+}
+
+preBuild.dependsOn('copyWebAssets')
+

@@ -107,6 +107,97 @@
         return REALMS[0];
     }
 
+    var MOBS = [
+        { id: 'son_chuot', name: 'Sơn Thử Yêu (Chuột Núi)', realm: 'Phàm Nhân - Ngưng Khí 1', hp: 80, atk: 12, drop: 'Linh Thảo Thô', lk: 15, exp: 20, img: 'assets/sprites/mob/icon_son_chuot.png' },
+        { id: 'sau_truc', name: 'Trúc Trùng Yêu (Sâu Trúc)', realm: 'Ngưng Khí 2 - 3', hp: 130, atk: 18, drop: 'Trúc Tiết Tinh', lk: 25, exp: 35, img: 'assets/sprites/mob/icon_sau_truc.png' },
+        { id: 'cho_lang', name: 'Thiết Nha Lang (Chó Sói)', realm: 'Ngưng Khí 4 - 6', hp: 200, atk: 28, drop: 'Lang Nha Huyết Thạch', lk: 35, exp: 50, img: 'assets/sprites/mob/icon_cho_lang.png' },
+        { id: 'doc_dang_yeu', name: 'Độc Đằng Thụ Yêu (Cây Độc)', realm: 'Ngưng Khí 7 - 9', hp: 300, atk: 40, drop: 'Độc Mộc Tâm', lk: 50, exp: 75, img: 'assets/sprites/mob/icon_doc_dang_yeu.png' },
+        { id: 'xuyen_son_giap', name: 'Xuyên Sơn Giáp Thú', realm: 'Ngưng Khí Đỉnh Phong', hp: 420, atk: 55, drop: 'Xuyên Sơn Giáp Phiến', lk: 70, exp: 110, img: 'assets/sprites/mob/icon_xuyen_son_giap.png' },
+        { id: 'thach_giap_yeu', name: 'Thạch Giáp Yêu (Quái Đá)', realm: 'Trúc Cơ Sơ Kỳ', hp: 580, atk: 75, drop: 'Huyền Thạch Tinh Hoa', lk: 95, exp: 160, img: 'assets/sprites/mob/icon_thach_giap_yeu.png' },
+        { id: 'u_minh_cu_mang', name: 'U Minh Cự Mãng', realm: 'Trúc Cơ Trung Kỳ', hp: 760, atk: 98, drop: 'Mãng Xà Đan', lk: 130, exp: 220, img: 'assets/sprites/mob/icon_u_minh_cu_mang.png' },
+        { id: 'nhen_bach_ngoc', name: 'Bạch Ngọc Chu Thú', realm: 'Trúc Cơ Viên Mãn', hp: 980, atk: 125, drop: 'Ngọc Chu Ti', lk: 180, exp: 300, img: 'assets/sprites/mob/icon_nhen_bach_ngoc.png' },
+        { id: 'thi_khoi_bach', name: 'Bạch Cốt Thi Khôi', realm: 'Kết Đan Sơ Kỳ', hp: 1250, atk: 160, drop: 'U Hồn Hạt', lk: 240, exp: 400, img: 'assets/sprites/mob/icon_thi_khoi_bach.png' },
+        { id: 'bach_ho_tuyet', name: 'Tuyết Phong Bạch Hổ', realm: 'Kết Đan Đỉnh Phong', hp: 1600, atk: 205, drop: 'Bạch Hổ Tinh Phách', lk: 320, exp: 550, img: 'assets/sprites/mob/icon_bach_ho_tuyet.png' }
+    ];
+
+    var BOSSES = [
+        { id: 'boss_linh_ho', name: 'Trấn Sơn Linh Hổ Vương', realm: 'Ngưng Khí Đại Viên Mãn', hp: 850, atk: 90, desc: 'Linh thú thủ sơn Hằng Nhạc Phái bị ma khí xâm thực, gầm vang chấn động cửu phong!', reward: 'Thiên Lam Ngọc Giản + Trúc Cơ Đan', lk: 200, exp: 400, img: 'assets/sprites/mob/icon_linh_ho_tran_son.png' },
+        { id: 'boss_xich_mang', name: 'Thượng Cổ Xích Mãng Vương', realm: 'Trúc Cơ Đỉnh Phong', hp: 1800, atk: 180, desc: 'Cự thú ngủ vạn năm dưới đáy Đầm Lầy Độc Mãng Tu Ma Hải, nuốt hồn luyện phách!', reward: 'Thần Thức Huyết Tinh + Hồn Phiên Tàn Mảnh', lk: 450, exp: 900, img: 'assets/sprites/mob/icon_xich_mang_vuong.png' },
+        { id: 'boss_khoi_loi', name: 'Viễn Cổ Hắc Diệu Khôi Lỗi', realm: 'Kết Đan Kỳ (Cực Cảnh)', hp: 3200, atk: 300, desc: 'Chiến giáp cơ quan từ thời Cổ Thần lưu lạc, mình đồng da sắt đao thương bất nhập!', reward: 'Cực Cảnh Lôi Thạch + Toái Toái Tiên Tinh', lk: 1000, exp: 2000, img: 'assets/sprites/mob/icon_khoi_loi_huyen_thiet.png' }
+    ];
+
+    var SECTS = [
+        {
+            id: 'hang_nhac',
+            name: 'Hằng Nhạc Phái',
+            realmReq: 1,
+            loc: 'Triệu Quốc · Hằng Nhạc Sơn',
+            desc: 'Môn phái sơ khai nơi Thiết Trụ (Vương Lâm) bắt đầu bước vào tiên lộ, nơi nhặt được chí bảo Thiên Nghịch Châu.',
+            bonus: '+15% Tốc độ ngưng tụ Linh khí tại Tụ Linh Trận'
+        },
+        {
+            id: 'tu_ma_hai',
+            name: 'Tu Ma Hải Tán Tu Liên Minh',
+            realmReq: 5,
+            loc: 'Triệu Quốc Ngoại Vực · Tu Ma Hải',
+            desc: 'Vùng đất hỗn loạn sát phạt khốc liệt, nơi vạn ma tề tựu, rèn giũa bản lĩnh sinh tử và Huyết Kiếm vô song.',
+            bonus: '+20% Linh khí & EXP khi Trảm Yêu thắng lợi'
+        },
+        {
+            id: 'van_thien_tong',
+            name: 'Vân Thiên Tông (Luyện Đan Đạo)',
+            realmReq: 7,
+            loc: 'Sở Quốc · Vân Thiên Sơn Mạch',
+            desc: 'Môn phái luyện đan đệ nhất Nam Bộ, nơi Vương Lâm cùng Lý Mộ Uyển ngày đêm nghiên cứu đan đạo nghịch thiên.',
+            bonus: 'Giảm 30% linh khí tiêu hao khi Luyện Trúc Cơ Đan'
+        },
+        {
+            id: 'luyen_hon_tong',
+            name: 'Luyện Hồn Tông (Bách Vạn Hồn Phiên)',
+            realmReq: 8,
+            loc: 'Chu Tước Tinh · U Minh Vực',
+            desc: 'Môn phái thượng cổ nắm giữ bí pháp luyện hồn, sáng chế Bách Vạn Hồn Phiên hiệu lệnh vạn linh tôn sùng.',
+            bonus: '+25% Sức mạnh Thần Thức (MIND) và Lực Chiến CP'
+        },
+        {
+            id: 'chu_tuoc_quoc',
+            name: 'Chu Tước Thánh Điện',
+            realmReq: 10,
+            loc: 'Đỉnh Chu Tước Sơn · Tu Chân Chi Thần',
+            desc: 'Thánh địa tối cao cai quản toàn bộ Chu Tước Tinh, nắm giữ thần ấn phụng thiên thừa vận.',
+            bonus: '+35% Toàn bộ chỉ số Tác Chiến và EXP tu vi'
+        },
+        {
+            id: 'la_thien_tinh_vuc',
+            name: 'La Thiên Tinh Vực Lôi Tiên Điện',
+            realmReq: 12,
+            loc: 'Vũ Trụ Giới Nội · La Thiên Vực Tinh Không',
+            desc: 'Chấp chưởng lôi đình hình phạt toàn vũ trụ, ngộ ra Nhân Quả Ý Cảnh và Sinh Tử Chân Đế.',
+            bonus: '+50% Lực chiến tác chiến và thu hoạch linh khí'
+        },
+        {
+            id: 'dap_thien_dien',
+            name: 'Đạp Thiên Cực Đạo Tiên Điện',
+            realmReq: 15,
+            loc: 'Tiên Cương Đại Lục Đỉnh Phong',
+            desc: 'Cảnh giới tối thượng siêu thoát luân hồi thiên đạo, nắm trọn 11,092 từ HSK 9 trong lòng bàn tay!',
+            bonus: 'Vô địch thiên hạ! Mọi giới hạn tu chân đều được khai phóng tối đa!'
+        }
+    ];
+
+    function calcCombatStats(state) {
+        var s = state || {};
+        var learned = Object.keys(s.items || {}).length;
+        var r = getRealm(s.exp || 0);
+        var arrayLvl = (s.sectData && s.sectData.arrayLevel) || 1;
+        var atk = 30 + (r.level * 20) + Math.floor(learned * 1.5) + (arrayLvl * 5);
+        var hp = 200 + (r.level * 120) + (learned * 5) + (arrayLvl * 20);
+        var def = 10 + (r.level * 15) + Math.floor(learned * 0.8) + (arrayLvl * 3);
+        var mind = 10 + (r.level * 25) + Math.floor(learned * 1.2) + (arrayLvl * 4);
+        var cp = Math.round(atk * 2.5 + hp * 0.5 + def * 1.8 + mind * 2);
+        return { cp: cp, hp: hp, atk: atk, def: def, mind: mind };
+    }
+
 
     // ---------- chữ quốc ngữ ----------
 

@@ -202,7 +202,7 @@ button:disabled { cursor: default; opacity: 0.5; }
 
 /* ---------- Thanh Điều Hướng Đáy Chuẩn Android Mobile ---------- */
 .bottom-nav {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 35;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 45;
     display: flex; justify-content: space-around; align-items: center;
     background: var(--paper); border-top: 2px solid var(--line);
     padding: 6px 4px calc(env(safe-area-inset-bottom, 0px) + 4px);
@@ -323,10 +323,10 @@ button:disabled { cursor: default; opacity: 0.5; }
 .sheet-backdrop { position: fixed; inset: 0; z-index: 40; background: var(--scrim); animation: fadeIn 0.25s; }
 .sheet-backdrop.light { background: var(--scrim-light); }
 .sheet {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 41;
-    max-height: 74dvh; max-width: 620px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px;
-    padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0px));
-    background: var(--paper); border: 2px solid var(--line); border-bottom: 0; border-radius: 20px 20px 0 0;
+    position: fixed; left: 0; right: 0; bottom: calc(54px + env(safe-area-inset-bottom, 0px)); z-index: 41;
+    max-height: calc(78dvh - 54px); max-width: 620px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px;
+    padding: 14px 16px 14px;
+    background: var(--paper); border: 2px solid var(--line); border-radius: 20px;
     box-shadow: 0 -3px 0 rgba(58, 42, 30, 0.18);
     overflow-y: auto; overscroll-behavior: contain; animation: sheetUp 0.3s var(--ease);
 }
@@ -340,8 +340,8 @@ button:disabled { cursor: default; opacity: 0.5; }
 @media (max-width: 899px) {
     .sheet.tall {
         top: calc(var(--vvt, 0px) + max(8px, env(safe-area-inset-top, 0px)));
-        bottom: auto;
-        max-height: calc(var(--vvh, 100dvh) - max(16px, env(safe-area-inset-top, 0px) + 8px));
+        bottom: calc(54px + env(safe-area-inset-bottom, 0px));
+        max-height: calc(var(--vvh, 100dvh) - 64px - max(16px, env(safe-area-inset-top, 0px) + 8px));
         border-bottom: 2px solid var(--line);
         border-radius: 20px;
         margin: 0 8px;

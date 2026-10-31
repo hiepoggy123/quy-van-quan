@@ -10,3 +10,4 @@ android/app/build/
 *.apk
 tutien_assets/
 
+android/app/src/main/assets/
