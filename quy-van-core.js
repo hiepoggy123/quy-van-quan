@@ -81,6 +81,25 @@
 
     var STAGE_LABELS = ['Chưa học', 'Mới học', 'Mới học', 'Mới học', 'Mới học', 'Đã thuộc', 'Đã thuộc',
         'Nhớ lâu', 'Khắc cốt', 'Thành thạo'];
+    var REALMS = [
+        { level: 1, name: 'Sơ Nhập Đạo Môn', title: 'Đạo Đồng', minExp: 0, maxExp: 100, icon: '🌱', desc: 'Mới bước chân vào núi mây, làm quen chữ Hán cơ bản.' },
+        { level: 2, name: 'Đồng Sinh Luyện Khí', title: 'Đồng Sinh', minExp: 100, maxExp: 300, icon: '📜', desc: 'Nhận diện mặt chữ, âm Hán Việt và Pinyin vững vàng.' },
+        { level: 3, name: 'Thư Sinh Trúc Cơ', title: 'Thư Sinh', minExp: 300, maxExp: 650, icon: '🖋️', desc: 'Nắm vững hơn 50 chữ Hán và các từ ghép 2 chữ quen thuộc.' },
+        { level: 4, name: 'Tú Tài Kết Đan', title: 'Tú Tài', minExp: 650, maxExp: 1200, icon: '🏮', desc: 'Hiểu rõ 47 bộ thủ và Khung Cấu Trúc Câu Vàng tiếng Trung.' },
+        { level: 5, name: 'Cử Nhân Kim Đan', title: 'Cử Nhân', minExp: 1200, maxExp: 2000, icon: '⚔️', desc: 'Đọc hiểu mượt mà các mẩu chuyện Liêu Trai và truyện .txt tải lên.' },
+        { level: 6, name: 'Tiến Sĩ Nguyên Anh', title: 'Tiến Sĩ', minExp: 2000, maxExp: 3200, icon: '🏯', desc: 'Tư duy câu chữ bằng ngữ cảnh thực tế, triệt tiêu học vẹt.' },
+        { level: 7, name: 'Học Sĩ Hóa Thần', title: 'Học Sĩ', minExp: 3200, maxExp: 5000, icon: '🌸', desc: 'Phản xạ đọc hiểu tự nhiên, giải đố ngữ cảnh nhanh chóng.' },
+        { level: 8, name: 'Đại Nho Đắc Đạo', title: 'Đại Nho', minExp: 5000, maxExp: 999999, icon: '🌟', desc: 'Chưởng Quán Quy Vân, thông kim bác cổ, xuất khẩu thành chương.' }
+    ];
+
+    function getRealm(exp) {
+        var e = Math.max(0, exp || 0);
+        for (var i = REALMS.length - 1; i >= 0; i--) {
+            if (e >= REALMS[i].minExp) return REALMS[i];
+        }
+        return REALMS[0];
+    }
+
 
     // ---------- chữ quốc ngữ ----------
 
@@ -364,7 +383,11 @@
             // taleChars: số chữ học qua cuộn truyện của khách đêm.
             stats: { answers: 0, correct: 0, exact: 0, fish: 0, lessons: 0, served: 0, taleChars: 0 },
             // vi: hiện dòng dịch tiếng Việt trong hội thoại (người mới chưa đọc được chữ nào).
-            settings: { ruby: 'auto', strict: false, pinyin: true, sfx: true, music: true, vi: true }
+            settings: { ruby: 'auto', strict: false, pinyin: true, sfx: true, music: true, vi: true },
+            exp: 0,
+            dailyQuests: { day: '', list: [], claimed: false },
+            achievements: {},
+            streak: { days: 1, lastDay: '' }
         };
     }
 
@@ -2448,6 +2471,8 @@
         ensurePairs: ensurePairs,
         pairQuestion: pairQuestion,
         pairExplain: pairExplain,
-        answerPair: answerPair
+        answerPair: answerPair,
+        REALMS: REALMS,
+        getRealm: getRealm
     };
 }));

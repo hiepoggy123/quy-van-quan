@@ -1,5 +1,5 @@
 // Service Worker for Quy Van Quan PWA (Offline Support)
-const CACHE_NAME = 'quy-van-v3';
+const CACHE_NAME = 'quy-van-v4';
 const ASSETS = [
   './',
   './index.html',
